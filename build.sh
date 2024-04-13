@@ -25,6 +25,8 @@ for file in \
     entities/track-tester.js \
     entities/camera.js \
     entities/interpolator.js \
+    entities/ship.js \
+    entities/player.js \
     scene.js \
     level.js \
     main.js \

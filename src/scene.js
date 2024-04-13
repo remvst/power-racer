@@ -3,7 +3,6 @@ class Scene {
     constructor() {
         this.entities = new Set();
         this.categories = new Map();
-        this.sortedEntities = [];
 
         this.speedRatio = 1;
         this.onCycle = new Set();
@@ -13,8 +12,6 @@ class Scene {
         if (this.entities.has(entity)) return;
         this.entities.add(entity);
         entity.scene = this;
-
-        this.sortedEntities.push(entity);
 
         for (const category of entity.categories) {
             if (!this.categories.has(category)) {
@@ -39,9 +36,6 @@ class Scene {
                 this.categories.get(category).delete(entity);
             }
         }
-
-        const index = this.sortedEntities.indexOf(entity);
-        if (index >= 0) this.sortedEntities.splice(index, 1);
     }
 
     cycle(elapsed) {
@@ -72,15 +66,24 @@ class Scene {
         ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         ctx.wrap(() => {
-            ctx.scale(camera.appliedZoom, camera.appliedZoom);
+            ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2)
+            ctx.rotate(-camera.rotation - Math.PI / 2);
+            ctx.translate(-CANVAS_WIDTH / 2, -CANVAS_HEIGHT / 2)
+
             ctx.translate(
-                CANVAS_WIDTH / 2 / camera.appliedZoom - camera.x,
-                CANVAS_HEIGHT / 2 / camera.appliedZoom - camera.y,
+                -camera.x,
+                -camera.y,
             );
 
-            this.sortedEntities.sort((a, b) => a.z - b.z);
+            ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2)
+            // ctx.rotate(Math.PI / 50);
+            // ctx.translate(-CANVAS_WIDTH / 2, -CANVAS_HEIGHT / 2)
+            // ctx.translate(
+            //     -camera.x,
+            //     -camera.y,
+            // );
 
-            for (const entity of this.sortedEntities) {
+            for (const entity of this.entities) {
                 ctx.wrap(() => entity.render());
             }
         });

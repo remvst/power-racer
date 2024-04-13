@@ -18,15 +18,17 @@ class Camera extends Entity {
         super.cycle(elapsed);
 
         for (const player of this.scene.category('player')) {
-            const target = {'x': player.x, 'y': player.y - 60 };
+            const target = {'x': player.x, 'y': player.y };
             const distance = dist(this, target);
             const angle = angleBetween(this, target);
             const appliedDist = min(distance, distance * elapsed * 3);
             this.x += appliedDist * cos(angle);
             this.y += appliedDist * sin(angle);
-        }
 
-        this.x = max(this.minX, this.x);
+            this.x = player.x;
+            this.y = player.y;
+            this.rotation = player.rotation;
+        }
     }
 
     zoomTo(toValue) {
@@ -35,4 +37,11 @@ class Camera extends Entity {
         }
         return this.scene.add(new Interpolator(this, 'zoom', this.zoom, toValue, 1)).await();
     }
+
+    // render() {
+    //     // console.log('rnd');
+    //     ctx.translate(this.x, this.y);
+    //     ctx.fillStyle = '#f00';
+    //     ctx.fillRect(-25, -25, 50, 50);
+    // }
 }
