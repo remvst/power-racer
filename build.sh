@@ -40,6 +40,9 @@ for file in \
 done
 
 # Zip file
-(cd dist && zip -r - .) > $OUT_ZIP
+(cd dist && zip -q -r - .) > $OUT_ZIP
+
+date=`date`
+echo "Built $date"
 
 exit 0
