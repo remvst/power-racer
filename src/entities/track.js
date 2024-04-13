@@ -173,10 +173,11 @@ class Track extends Entity {
         ctx.fillStyle = 'red';
 
         ctx.strokeStyle = 'white';
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
+        // ctx.lineCap = 'round';
+        // ctx.lineJoin = 'round';
 
         ctx.fillStyle = '#000';
+        ctx.globalAlpha = 0.8;
         ctx.beginPath();
         for (let i = 0 ; i < this.trackBits.length ; i++) {
             const bit = this.trackBits[i];
@@ -187,28 +188,32 @@ class Track extends Entity {
             ctx.lineTo(bit.pointAt(1).x, bit.pointAt(1).y);
         }
         ctx.fill();
+        ctx.globalAlpha = 1;
 
-        // ctx.lineWidth = 20;
-        // for (const xOffset of [-1, 1]) {
-        //     ctx.beginPath();
-        //     for (const bit of this.trackBits) {
-        //         ctx.lineTo(bit.pointAt(xOffset).x, bit.pointAt(xOffset).y);
-        //     }
-        //     ctx.stroke();
-        // }
+        ctx.lineWidth = 30;
+        for (const xOffset of [-1, 1]) {
+            ctx.beginPath();
+            for (const bit of this.trackBits) {
+                ctx.lineTo(bit.pointAt(xOffset).x, bit.pointAt(xOffset).y);
+            }
+            ctx.stroke();
+        }
 
-        // ctx.lineWidth = 2;
-        // for (const xOffset of [-0.33, 0.33]) {
-        //     ctx.beginPath();
-        //     for (const bit of this.trackBits) {
-        //         ctx.lineTo(bit.pointAt(xOffset).x, bit.pointAt(xOffset).y);
-        //     }
-        //     ctx.stroke();
-        // }
+        ctx.lineWidth = 2;
+        for (const xOffset of [-0.33, 0.33]) {
+            ctx.beginPath();
+            for (const bit of this.trackBits) {
+                ctx.lineTo(bit.pointAt(xOffset).x, bit.pointAt(xOffset).y);
+            }
+            ctx.stroke();
+        }
+
+        return;
 
         let i = 0;
         for (const bit of this.trackBits) {
             ctx.fillStyle = '#f00';
+            ctx.lineWidth = 1;
             ctx.fillRect(bit.pointAt(1).x - 5, bit.pointAt(1).y - 5, 10, 10);
 
             ctx.fillText(`${i++}`, bit.x, bit.y);

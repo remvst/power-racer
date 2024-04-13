@@ -62,7 +62,7 @@ class Scene {
         const camera = firstItem(this.category('camera'));
 
         // Background
-        ctx.fillStyle = '#00f';
+        ctx.fillStyle = '#94d';
         ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         ctx.wrap(() => {
