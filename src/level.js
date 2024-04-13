@@ -4,6 +4,7 @@ class Level {
 
         this.scene.add(new Camera());
         this.scene.add(new Track());
+        this.scene.add(new TrackTester());
 
         DOWN = {};
     }

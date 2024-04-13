@@ -22,6 +22,7 @@ for file in \
     graphics/wrap.js \
     entities/entity.js \
     entities/track.js \
+    entities/track-tester.js \
     entities/camera.js \
     entities/interpolator.js \
     scene.js \
