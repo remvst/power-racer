@@ -63,6 +63,22 @@ class Track extends Entity {
         return null;
     }
 
+    closestTrackBit(x, y) {
+        let closest = null;
+        let closestDistance =  Number.MAX_VALUE;
+
+        // TODO cache this
+        for (const bit of this.trackBits) {
+            const dist = distP(bit.x, bit.y, x, y);
+            if (dist < closestDistance)  {
+                closest = bit;
+                closestDistance = dist;
+            }
+        }
+
+        return closest;
+    }
+
     render() {
         ctx.fillStyle = 'red';
 
