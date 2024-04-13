@@ -13,8 +13,20 @@ mkdir $OUT_DIR
 # Build the JS file
 touch $OUT_JS
 for file in \
+    globals.js \
+    math.js \
+    util/resizer.js \
+    util/first-item.js \
+    input/keyboard.js \
+    graphics/create-canvas.js \
+    graphics/wrap.js \
+    entities/entity.js \
+    entities/track.js \
+    entities/camera.js \
+    entities/interpolator.js \
+    scene.js \
+    level.js \
     main.js \
-    track.js \
 ; do
     cat src/$file >> $OUT_JS
 done
@@ -28,7 +40,6 @@ for file in \
 done
 
 # Zip file
-# zip -r $OUT_ZIP dist/*
 (cd dist && zip -r - .) > $OUT_ZIP
 
 exit 0

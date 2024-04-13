@@ -1,0 +1,3 @@
+class Track extends Entity {
+
+}
