@@ -1,7 +1,47 @@
 class Ship extends Entity {
 
+    constructor() {
+        super();
+
+        this.power = 1;
+        this.controls = {
+            left: 0,
+            right: 0,
+            brake: 0,
+            accelerate: 0,
+        };
+
+        this.movementAngle = 0;
+        this.speed = 0;
+        this.maxSpeed = 600;
+    }
+
     cycle(elapsed) {
         super.cycle(elapsed);
+
+        if (this.controls.left) this.rotation -= Math.PI * elapsed;
+        if (this.controls.right) this.rotation += Math.PI * elapsed;
+
+        const targetSpeed = this.controls.accelerate
+            ? this.maxSpeed
+            : 0;
+        this.speed += between(
+            -elapsed * (this.controls.brake ? 200 : 100),
+            targetSpeed - this.speed,
+            elapsed * 100,
+        );
+
+        const angleDiff = normalize(normalize(this.rotation) - normalize(this.movementAngle));
+        const speedRatio = this.speed / this.maxSpeed;
+        const angleCatchUp = (1 - speedRatio) * Math.PI + Math.PI / 2;
+        this.movementAngle += between(
+            -elapsed * angleCatchUp,
+            angleDiff,
+            elapsed * angleCatchUp,
+        );
+
+        this.x += Math.cos(this.movementAngle) * this.speed * elapsed;
+        this.y += Math.sin(this.movementAngle) * this.speed * elapsed;
 
         const track = firstItem(this.scene.category('track'));
         if (!track) return;
@@ -16,8 +56,8 @@ class Ship extends Entity {
             const best = dist(adjustedLeft, this) < dist(adjustedRight, this)
                 ? adjustedLeft
                 : adjustedRight;
-            this.x = best.x;
-            this.y = best.y;
+            // this.x = best.x;
+            // this.y = best.y;
 
             // const angle = angleBetween(closestBit, this);
             // this.x = closestBit.x + Math.cos(angle) * closestBit.width / 2;
@@ -54,6 +94,19 @@ class Ship extends Entity {
             ctx.lineTo(0, -0);
             ctx.lineTo(-20, 20);
             ctx.fill();
+        });
+
+        ctx.wrap(() => {
+            ctx.strokeStyle = '#f00';
+            ctx.translate(this.x, this.y);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(Math.cos(this.movementAngle) * (this.speed - 10), Math.sin(this.movementAngle) * (this.speed - 10))
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(Math.cos(this.movementAngle) * this.speed, Math.sin(this.movementAngle) * this.speed, 10, 0, Math.PI * 2);
+            ctx.stroke();
         });
 
         ctx.wrap(() => {

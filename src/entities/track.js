@@ -21,7 +21,7 @@ class TrackBit {
     constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.width = 200;
+        this.width = 400;
         this.next = null;
         this.previous = null;
     }
@@ -93,12 +93,12 @@ class Track extends Entity {
         this.extendTrack();
         this.extendTrack();
         this.extendTrack();
-        // this.extendTrack();
-        // this.extendTrack();
-        // this.extendTrack();
-        // this.extendTrack();
-        // this.extendTrack();
-        // this.extendTrack();
+        this.extendTrack();
+        this.extendTrack();
+        this.extendTrack();
+        this.extendTrack();
+        this.extendTrack();
+        this.extendTrack();
     }
 
     extendTrack() {
@@ -109,7 +109,7 @@ class Track extends Entity {
         const length = 400;
 
         const finalX = length;
-        const finalY = length;
+        const finalY = length * pick([-1, 1]);
 
         const bits = length / 50;
 

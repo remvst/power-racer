@@ -7,15 +7,9 @@ class Player extends Ship {
     cycle(elapsed) {
         super.cycle(elapsed);
 
-        if (DOWN[37]) {
-            this.rotation -= Math.PI * elapsed;
-        } else if (DOWN[39]) {
-            this.rotation += Math.PI * elapsed;
-        }
-
-        if (DOWN[38]) {
-            this.x += Math.cos(this.rotation) * 200 * elapsed;
-            this.y += Math.sin(this.rotation) * 200 * elapsed;
-        }
+        this.controls.left = DOWN[37];
+        this.controls.right = DOWN[39];
+        this.controls.brake = DOWN[40];
+        this.controls.accelerate = DOWN[38];
     }
 }
