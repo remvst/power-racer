@@ -67,7 +67,7 @@ class Scene {
 
         ctx.wrap(() => {
             ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2)
-            ctx.rotate(-camera.rotation - Math.PI / 2);
+            ctx.rotate(-camera.rotation);
             ctx.translate(-CANVAS_WIDTH / 2, -CANVAS_HEIGHT / 2)
 
             ctx.translate(

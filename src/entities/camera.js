@@ -27,7 +27,7 @@ class Camera extends Entity {
 
             this.x = player.x;
             this.y = player.y;
-            this.rotation = player.rotation;
+            this.rotation = player.rotation + Math.PI / 2;
         }
     }
 

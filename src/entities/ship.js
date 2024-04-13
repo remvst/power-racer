@@ -9,8 +9,7 @@ class Ship extends Entity {
         const closestBit = track.closestTrackBit(this.x, this.y);
         if (!closestBit) return;
 
-        if (dist(this, closestBit) > closestBit.width / 2) {
-            // console.log('OUT!');
+        if (!closestBit.contains(this.x, this.y)) {
             const adjustedLeft = closestBit.pointAt(-0.8);
             const adjustedRight = closestBit.pointAt(0.8);
 
@@ -19,6 +18,10 @@ class Ship extends Entity {
                 : adjustedRight;
             this.x = best.x;
             this.y = best.y;
+
+            // const angle = angleBetween(closestBit, this);
+            // this.x = closestBit.x + Math.cos(angle) * closestBit.width / 2;
+            // this.y = closestBit.y + Math.sin(angle) * closestBit.width / 2;
         }
     }
 
@@ -27,12 +30,17 @@ class Ship extends Entity {
             const track = firstItem(this.scene.category('track'));
             if (!track) return;
 
-            for (let x = this.x - 400 ; x < this.x + 400 ; x += 10) {
-                for (let y = this.y - 400 ; y < this.y + 400 ; y += 10) {
-                    ctx.fillStyle = track.contains(x, y) ? 'green' : 'red';
-                    ctx.fillRect(x - 2, y - 2, 4, 4);
-                }
+            const closestBit = track.closestTrackBit(this.x, this.y);
+            if (!closestBit) return;
+
+            const { polygon } = closestBit;
+
+            ctx.fillStyle = closestBit.contains(this.x, this.y) ? '#0f0' : '#f00';
+            ctx.beginPath();
+            for (const pt of polygon) {
+                ctx.lineTo(pt[0], pt[1]);
             }
+            ctx.fill();
         });
 
         ctx.wrap(() => {
