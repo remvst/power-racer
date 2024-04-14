@@ -261,6 +261,8 @@ class Track extends Entity {
             ctx.stroke();
         }
 
+        return;
+
         let i = 0;
         for (const bit of this.trackBits) {
             ctx.fillStyle = '#f00';

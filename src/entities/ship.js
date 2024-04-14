@@ -147,6 +147,7 @@ class Ship extends Entity {
         });
 
         ctx.wrap(() => {
+            return;
             ctx.strokeStyle = '#f00';
             ctx.translate(this.x, this.y);
             ctx.beginPath();
@@ -160,6 +161,7 @@ class Ship extends Entity {
         });
 
         ctx.wrap(() => {
+            return;
             if (!this.closestBit) return;
 
             ctx.strokeStyle = '#ff0';
