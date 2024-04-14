@@ -27,6 +27,7 @@ for file in \
     entities/interpolator.js \
     entities/ship.js \
     entities/player.js \
+    entities/hud.js \
     scene.js \
     level.js \
     main.js \
@@ -44,6 +45,7 @@ done
 
 # Zip file
 (cd dist && zip -q -r - .) > $OUT_ZIP
+du -h $OUT_ZIP
 
 date=`date`
 echo "Built $date"

@@ -18,7 +18,7 @@ class Ship extends Entity {
         this.inertia = {
             x: 0,
             y: 0,
-        }
+        };
     }
 
     cycle(elapsed) {
@@ -88,12 +88,18 @@ class Ship extends Entity {
         const track = firstItem(this.scene.category('track'));
         if (!track) return;
 
-        const closestBit = track.closestTrackBit(this.x, this.y);
-        if (!closestBit) return;
+        const previousDistance = this.closestBit?.distance || 0;
 
-        if (!closestBit.contains(this.x, this.y)) {
-            const adjustedLeft = closestBit.pointAt(-0.8);
-            const adjustedRight = closestBit.pointAt(0.8);
+        if (this.closestBit && !this.closestBit.contains(this.x, this.y)) {
+            this.closestBit = null;
+        }
+
+        if (!this.closestBit) this.closestBit = track.closestTrackBit(this.x, this.y);
+        if (!this.closestBit) return;
+
+        if (!this.closestBit.contains(this.x, this.y)) {
+            const adjustedLeft = this.closestBit.pointAt(-0.8);
+            const adjustedRight = this.closestBit.pointAt(0.8);
 
             const best = dist(adjustedLeft, this) < dist(adjustedRight, this)
                 ? adjustedLeft
@@ -105,6 +111,7 @@ class Ship extends Entity {
             // this.x = closestBit.x + Math.cos(angle) * closestBit.width / 2;
             // this.y = closestBit.y + Math.sin(angle) * closestBit.width / 2;
         }
+        firstItem(this.scene.category('track')).prune(this.closestBit.distance);
     }
 
     render() {
@@ -153,17 +160,13 @@ class Ship extends Entity {
         });
 
         ctx.wrap(() => {
-            const track = firstItem(this.scene.category('track'));
-            if (!track) return;
-
-            const closestBit = track.closestTrackBit(this.x, this.y);
-            if (!closestBit) return;
+            if (!this.closestBit) return;
 
             ctx.strokeStyle = '#ff0';
             ctx.lineWidth = 4;
             ctx.beginPath();
             ctx.moveTo(this.x, this.y);
-            ctx.lineTo(closestBit.x, closestBit.y);
+            ctx.lineTo(this.closestBit.x, this.closestBit.y);
             ctx.stroke();
         });
     }

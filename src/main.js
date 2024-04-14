@@ -35,6 +35,7 @@ frame = () => {
         for (const line of [
             'FPS: ' + ~~(1 / elapsed),
             'Entities: ' + level.scene.entities.size,
+            'Track bits: ' + firstItem(level.scene.category('track'))?.trackBits?.length,
         ].reverse()) {
             ctx.strokeText(line, 10, y);
             ctx.fillText(line, 10, y);

@@ -24,6 +24,7 @@ class TrackBit {
         this.width = 400;
         this.next = null;
         this.previous = null;
+        this.distance = 0;
     }
 
     get angle() {
@@ -96,14 +97,14 @@ class Track extends Entity {
         this.addTrackBit(new TrackBit(600, 0));
         this.addTrackBit(new TrackBit(800, 0));
 
-        for (let i = 0 ; i < 20 ; i++) {
-            this.addCurve();
-            this.addStraightLine();
-        }
+        // for (let i = 0 ; i < 20 ; i++) {
+        //     this.addCurve();
+        //     this.addStraightLine();
+        // }
     }
 
     extend(generateBits) {
-        const lastBit = this.trackBits[this.trackBits.length - 1]
+        const lastBit = this.trackBits[this.trackBits.length - 1];
         const baseAngle = lastBit.angle;
 
         const doAdd = (x, y) => {
@@ -114,10 +115,7 @@ class Track extends Entity {
             return this.addTrackBit(new TrackBit(adjustedX, adjustedY));
         }
 
-        const minFinalAngle = -Math.PI / 2;
-        const maxFinalAngle = Math.PI / 2;
-
-        generateBits(doAdd, minFinalAngle, maxFinalAngle);
+        generateBits(doAdd, lastBit);
     }
 
     addStraightLine() {
@@ -135,16 +133,18 @@ class Track extends Entity {
     }
 
     addCurve() {
-        const lastBit = this.trackBits[this.trackBits.length - 1]
-        const baseAngle = this.trackBits[this.trackBits.length - 1].angle;
+        this.extend((add, lastBit) => {
+            const baseAngle = lastBit.angle;
 
-        this.extend((add, minFinalAngle, maxFinalAngle) => {
+            const minFinalAngle = -Math.PI / 2;
+            const maxFinalAngle = Math.PI / 2;
+
             const finalCurveAngle = rnd(minFinalAngle, maxFinalAngle); // TODO random
 
             const startRelativeAngle = 0;
             const endRelativeAngle = normalize(finalCurveAngle - baseAngle);
 
-            const curveRadius = rnd(300, 1000);
+            const curveRadius = rnd(300, 800);
 
             const curveCenterX = 0;
             const curveCenterY = Math.sin(endRelativeAngle) > 0 ? curveRadius : -curveRadius;
@@ -164,7 +164,6 @@ class Track extends Entity {
                 );
             }
         });
-
     }
 
     addTrackBit(trackBit) {
@@ -172,6 +171,7 @@ class Track extends Entity {
         if (currentLast) {
             currentLast.next = trackBit;
             trackBit.previous = currentLast;
+            trackBit.distance = currentLast.distance + dist(trackBit, trackBit.previous);
         }
         this.trackBits.push(trackBit);
         return trackBit;
@@ -206,6 +206,20 @@ class Track extends Entity {
         }
 
         return closest;
+    }
+
+    prune(currentDistance) {
+        // Get rid of now-irrelevant bits
+        while (this.trackBits[0].distance < currentDistance - CANVAS_WIDTH * 2) {
+            this.trackBits.shift();
+        }
+
+        // Extend
+        const lastBit = this.trackBits[this.trackBits.length - 1];
+        if (lastBit.distance < currentDistance + CANVAS_WIDTH * 2) {
+            this.addCurve();
+            this.addStraightLine();
+        }
     }
 
     render() {
@@ -247,15 +261,14 @@ class Track extends Entity {
             ctx.stroke();
         }
 
-        return;
-
         let i = 0;
         for (const bit of this.trackBits) {
             ctx.fillStyle = '#f00';
             ctx.lineWidth = 1;
             ctx.fillRect(bit.pointAt(1).x - 5, bit.pointAt(1).y - 5, 10, 10);
 
-            ctx.fillText(`${i++}`, bit.x, bit.y);
+            // ctx.fillText(`${i++}`, bit.x, bit.y);
+            ctx.fillText(`${Math.round(bit.distance)}`, bit.x, bit.y);
 
             ctx.beginPath();
             ctx.moveTo(bit.x, bit.y);

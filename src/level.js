@@ -6,6 +6,7 @@ class Level {
         // this.scene.add(new TrackTester());
         this.scene.add(new Player());
         this.scene.add(new Camera());
+        this.scene.add(new HUD());
 
         DOWN = {};
     }
