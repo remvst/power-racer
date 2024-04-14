@@ -30,6 +30,8 @@ for file in \
     entities/ship.js \
     entities/player.js \
     entities/hud.js \
+    entities/booster.js \
+    entities/drain.js \
     entities/animations/particle.js \
     scene.js \
     level.js \

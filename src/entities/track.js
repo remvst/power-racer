@@ -116,6 +116,13 @@ class Track extends Entity {
         }
 
         generateBits(doAdd, lastBit);
+
+        const booster = pick([new Booster(), new Drain()]);
+        const position = lastBit.pointAt(pick([0, 0.6, -0.6]));
+        booster.x = position.x;
+        booster.y = position.y;
+        booster.rotation = lastBit.angle;
+        this.scene.add(booster);
     }
 
     addStraightLine() {
@@ -253,7 +260,7 @@ class Track extends Entity {
             ctx.fill();
         }
 
-        ctx.strokeStyle = '#fff';
+        ctx.strokeStyle = '#40b';
         ctx.lineWidth = 30;
         for (const xOffset of [-1, 1]) {
             ctx.beginPath();
