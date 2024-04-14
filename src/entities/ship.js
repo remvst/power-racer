@@ -38,7 +38,7 @@ class Ship extends Entity {
     }
 
     get effectiveAcceleration() {
-        return this.isBoosted ? 4000 : 1000;
+        return this.isBoosted ? 3000 : 1000;
     }
 
     cycle(elapsed) {
@@ -48,9 +48,12 @@ class Ship extends Entity {
         if (this.controls.right) this.rotation += Math.PI * elapsed;
 
         // Lose inertia over time
-        const inertiaAngle = Math.atan2(this.inertia.y, this.inertia.x);
+        const inertiaAngle = normalize(Math.atan2(this.inertia.y, this.inertia.x));
+        const resistance = Math.abs(normalize(this.rotation - inertiaAngle)) / (Math.PI / 2);
+        const actualResistance = interpolate(100, 800, resistance)
+
         const inertiaDistance = distP(0, 0, this.inertia.x, this.inertia.y);
-        const newDistance = Math.max(0, inertiaDistance - elapsed * 400);
+        const newDistance = Math.max(0, inertiaDistance - elapsed * actualResistance);
         this.inertia.x = Math.cos(inertiaAngle) * newDistance;
         this.inertia.y = Math.sin(inertiaAngle) * newDistance;
 
