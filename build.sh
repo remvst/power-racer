@@ -4,6 +4,8 @@ OUT_DIR=dist/
 OUT_JS=$OUT_DIR/main.js
 OUT_ZIP=out.zip
 
+echo 'Building...'
+
 # Clean up
 rm -rf $OUT_DIR
 rm -f $OUT_ZIP
@@ -35,6 +37,10 @@ for file in \
     cat src/$file >> $OUT_JS
 done
 
+tmp=`mktemp`
+npx terser $OUT_JS --compress ecma=2015,computed_props=false 1>$tmp
+cat $tmp 1>$OUT_JS
+
 # Copy files as is
 for file in \
     style.css \
@@ -43,11 +49,10 @@ for file in \
     cp src/$file $OUT_DIR/$file
 done
 
+echo "Done"
+
 # Zip file
 (cd dist && zip -q -r - .) > $OUT_ZIP
 du -h $OUT_ZIP
-
-date=`date`
-echo "Built $date"
 
 exit 0
