@@ -61,10 +61,6 @@ class Scene {
     render() {
         const camera = firstItem(this.category('camera'));
 
-        // Background
-        ctx.fillStyle = '#94d';
-        ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
         ctx.wrap(() => {
             ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2)
             ctx.rotate(-camera.rotation);

@@ -24,6 +24,7 @@ for file in \
     graphics/create-canvas.js \
     graphics/wrap.js \
     entities/entity.js \
+    entities/background.js \
     entities/track.js \
     entities/track-tester.js \
     entities/camera.js \
@@ -34,6 +35,7 @@ for file in \
     entities/booster.js \
     entities/drain.js \
     entities/animations/particle.js \
+    entities/animations/color-change.js \
     scene.js \
     level.js \
     main.js \

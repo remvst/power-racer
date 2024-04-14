@@ -11,8 +11,6 @@ class Ship extends Entity {
             accelerate: 0,
         };
 
-        this.maxSpeed = 800;
-
         this.inertia = {
             x: 0,
             y: 0,
@@ -23,6 +21,10 @@ class Ship extends Entity {
         this.nextParticle = 0;
         this.trailLeft = [];
         this.trailRight = [];
+
+        this.boostCount = 0;
+
+        this.setLevel(0);
     }
 
     get speed() {
@@ -240,7 +242,7 @@ class Ship extends Entity {
             ctx.translate(this.x, this.y);
             ctx.rotate(this.rotation);
 
-            ctx.fillStyle = '#fff';
+            ctx.fillStyle = '#fff';;
             ctx.beginPath();
             ctx.moveTo(40, 0);
             ctx.lineTo(-20, -20);
@@ -290,6 +292,27 @@ class Ship extends Entity {
                 [1, 0],
             ));
         }
+
+        this.boostCount++;
+        this.setLevel(Math.floor(this.boostCount / 5));
+    }
+
+    setLevel(level) {
+        this.level = level;
+
+        const COLORS = [
+            '#94d',
+            '#0bb',
+            '#f39',
+            '#f61',
+            '#0c0',
+            '#6df',
+        ];
+        if (this.scene) {
+            firstItem(this.scene.category('background')).changeColor(COLORS[level % COLORS.length]);
+        }
+
+        this.maxSpeed = 500 + level * 100;
     }
 
     explode() {
@@ -312,6 +335,6 @@ class Ship extends Entity {
         }
 
         firstItem(this.scene.category('camera')).shake(0.3);
-        this.scene.remove(this);
+        this.remove();
     }
 }

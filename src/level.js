@@ -2,6 +2,7 @@ class Level {
     constructor() {
         this.scene = new Scene();
 
+        this.scene.add(new Background());
         this.scene.add(new Track());
         // this.scene.add(new TrackTester());
         this.scene.add(new Player());

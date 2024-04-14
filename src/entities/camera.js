@@ -33,7 +33,7 @@ class Camera extends Entity {
             const targetZoom = interpolate(
                 player.power ? 1 : 2,
                 0.5,
-                player.speed / player.maxSpeed,
+                (player.speed - 400) / 800,
             );
             const zoomDiff = targetZoom - this.zoom;
             const appliedZoomDiff = zoomDiff * elapsed * 0.5;

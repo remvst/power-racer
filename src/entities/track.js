@@ -96,8 +96,10 @@ class Track extends Entity {
         const lastBit = this.trackBits[this.trackBits.length - 1];
         const baseAngle = lastBit.angle;
 
+        const player = firstItem(this.scene.category('player'));
+
         const width = Math.random() < 0.2
-            ? pick([600, 800, 400])
+            ? pick([0.5, 1, 1.5]) * player.maxSpeed
             : lastBit.width;
 
         const doAdd = (x, y) => {
@@ -124,7 +126,9 @@ class Track extends Entity {
     }
 
     addStraightLine() {
-        const length = rnd(200, 2000);
+        const player = firstItem(this.scene.category('player'));
+
+        const length = rnd(0.3, 2) * player.maxSpeed;
         const bitCount = Math.ceil(length / 100);
 
         this.extend((add) => {
@@ -138,6 +142,8 @@ class Track extends Entity {
     }
 
     addCurve() {
+        const player = firstItem(this.scene.category('player'));
+
         this.extend((add, lastBit) => {
             const baseAngle = lastBit.angle;
 
@@ -149,7 +155,7 @@ class Track extends Entity {
             const startRelativeAngle = 0;
             const endRelativeAngle = normalize(finalCurveAngle - baseAngle);
 
-            const curveRadius = rnd(300, 1500);
+            const curveRadius = rnd(1, 3) * player.maxSpeed;
 
             const curveCenterX = 0;
             const curveCenterY = Math.sin(endRelativeAngle) > 0 ? curveRadius : -curveRadius;
@@ -179,7 +185,6 @@ class Track extends Entity {
             trackBit.distance = currentLast.distance + dist(trackBit, trackBit.previous);
         }
         this.trackBits.push(trackBit);
-        // trackBit.width = 600 + Math.sin(trackBit.distance * Math.PI * 2 / 4000) * 200;
         return trackBit;
     }
 
@@ -231,7 +236,7 @@ class Track extends Entity {
         }
     }
 
-    render() {
+    doRender(camera) {
         ctx.fillStyle = '#000';
         ctx.globalAlpha = 0.8;
         ctx.beginPath();
@@ -246,9 +251,13 @@ class Track extends Entity {
         ctx.fill();
         ctx.globalAlpha = 1;
 
+        const backgroundColor = firstItem(this.scene.category('background')).transitionedColor;
+
+        const trackColor1 = multiplyColor(backgroundColor, 0.1);
+        const trackColor2 = multiplyColor(backgroundColor, 0.2);
         for (const bit of this.trackBits) {
             if (!bit.next) continue;
-            ctx.fillStyle = ((bit.distance % 400) / 400) < 0.5 ? '#000' : '#111';
+            ctx.fillStyle = ((bit.distance % 400) / 400) < 0.5 ? trackColor1 : trackColor2;
             ctx.beginPath();
             ctx.lineTo(bit.pointAt(-1).x, bit.pointAt(-1).y);
             ctx.lineTo(bit.pointAt(1).x, bit.pointAt(1).y);
@@ -257,7 +266,7 @@ class Track extends Entity {
             ctx.fill();
         }
 
-        ctx.strokeStyle = multiplyColor('#94d', 0.6);
+        ctx.strokeStyle = multiplyColor(backgroundColor, 0.6);
         ctx.lineWidth = 30;
         for (const xOffset of [-1, 1]) {
             ctx.beginPath();
@@ -267,7 +276,7 @@ class Track extends Entity {
             ctx.stroke();
         }
 
-        ctx.strokeStyle = '#222';
+        ctx.strokeStyle = multiplyColor(backgroundColor, 0.4);
         ctx.lineWidth = 2;
         for (const xOffset of [-0.33, 0.33]) {
             ctx.beginPath();
