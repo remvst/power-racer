@@ -1,6 +1,20 @@
 class Booster extends Entity {
     cycle(elapsed) {
         super.cycle(elapsed);
+
+        const player = firstItem(this.scene.category('player'));
+        if (!player) return;
+
+        if (dist(player, this) < 50) {
+            this.scene.remove(this);
+
+            const { speed } = player;
+            const newSpeed = Math.min(player.maxSpeed * 1.5, speed * 2);
+
+            player.power = 1;
+            player.inertia.x = Math.cos(this.rotation) * newSpeed;
+            player.inertia.y = Math.sin(this.rotation) * newSpeed;
+        }
     }
 
     doRender() {

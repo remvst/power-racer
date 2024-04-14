@@ -12,7 +12,6 @@ class Ship extends Entity {
         };
 
         this.movementAngle = 0;
-        this.speed = 0;
         this.maxSpeed = 800;
 
         this.inertia = {
@@ -23,6 +22,10 @@ class Ship extends Entity {
         this.nextParticle = 0;
         this.trailLeft = [];
         this.trailRight = [];
+    }
+
+    get speed() {
+        return distP(0, 0, this.inertia.x, this.inertia.y);
     }
 
     cycle(elapsed) {
@@ -38,7 +41,7 @@ class Ship extends Entity {
         this.inertia.x = Math.cos(inertiaAngle) * newDistance;
         this.inertia.y = Math.sin(inertiaAngle) * newDistance;
 
-        const speed = distP(0, 0, this.inertia.x, this.inertia.y);
+        const { speed } = this;
         if (this.controls.accelerate && speed < this.maxSpeed) {
             this.inertia.x += 1000 * elapsed * Math.cos(this.rotation);
             this.inertia.y += 1000 * elapsed * Math.sin(this.rotation);
@@ -46,7 +49,7 @@ class Ship extends Entity {
             this.inertia.x = between(-this.maxSpeed, this.inertia.x, this.maxSpeed);
             this.inertia.y = between(-this.maxSpeed, this.inertia.y, this.maxSpeed);
 
-            const speed = distP(0, 0, this.inertia.x, this.inertia.y);
+            const { speed } = this;
             if (speed > this.maxSpeed) {
                 const inertiaAngle = Math.atan2(this.inertia.y, this.inertia.x);
                 this.inertia.x = Math.cos(inertiaAngle) * this.maxSpeed;
@@ -72,15 +75,6 @@ class Ship extends Entity {
         //     -this.inertia.y,
         //     elapsed * 100,
         // )
-
-        const targetSpeed = this.controls.accelerate
-            ? this.maxSpeed
-            : 0;
-        this.speed += between(
-            -elapsed * (this.controls.brake ? 200 : 100),
-            targetSpeed - this.speed,
-            elapsed * 200,
-        );
 
         const angleDiff = normalize(normalize(this.rotation) - normalize(this.movementAngle));
         const speedRatio = this.speed / this.maxSpeed;

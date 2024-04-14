@@ -21,7 +21,7 @@ class TrackBit {
     constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.width = 400;
+        this.width = 600;
         this.next = null;
         this.previous = null;
         this.distance = 0;

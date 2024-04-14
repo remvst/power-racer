@@ -23,12 +23,20 @@ class Camera extends Entity {
             const appliedDiff = rotationDiff * elapsed * Math.PI / 2;
             this.rotation += appliedDiff;
 
-            this.x = player.x + Math.cos(this.rotation - Math.PI / 2) * 200;
-            this.y = player.y + Math.sin(this.rotation - Math.PI / 2) * 200;
+            this.x = player.x + Math.cos(this.rotation - Math.PI / 2) * 200 / this.zoom;
+            this.y = player.y + Math.sin(this.rotation - Math.PI / 2) * 200 / this.zoom;
+
+            const targetZoom = 1 - (player.speed / player.maxSpeed) * 0.25;
+            const zoomDiff = targetZoom - this.zoom;
+            const appliedZoomDiff = zoomDiff * elapsed * 0.5;
+
+            this.zoom += appliedZoomDiff;
 
             // this.x = player.x;
             // this.y = player.y;
             // this.rotation = 0;
+
+            // this.zoom = 1 - (player.speed / player.maxSpeed) * 0.5;
         }
     }
 
