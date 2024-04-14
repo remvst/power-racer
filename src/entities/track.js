@@ -260,7 +260,7 @@ class Track extends Entity {
             ctx.fill();
         }
 
-        ctx.strokeStyle = '#40b';
+        ctx.strokeStyle = multiplyColor('#94d', 0.6);
         ctx.lineWidth = 30;
         for (const xOffset of [-1, 1]) {
             ctx.beginPath();

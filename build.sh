@@ -19,6 +19,7 @@ for file in \
     math.js \
     util/resizer.js \
     util/first-item.js \
+    util/colors.js \
     input/keyboard.js \
     graphics/create-canvas.js \
     graphics/wrap.js \
