@@ -18,16 +18,6 @@ class Camera extends Entity {
         super.cycle(elapsed);
 
         for (const player of this.scene.category('player')) {
-            const target = {'x': player.x, 'y': player.y };
-            const distance = dist(this, target);
-            const angle = angleBetween(this, target);
-            const appliedDist = min(distance, distance * elapsed * 3);
-            this.x += appliedDist * cos(angle);
-            this.y += appliedDist * sin(angle);
-
-            this.x = player.x + Math.cos(player.rotation) * 200;
-            this.y = player.y + Math.sin(player.rotation) * 200;
-
             const targetRotation = normalize(player.rotation + Math.PI / 2);
             const rotationDiff = normalize(targetRotation - this.rotation);
             const appliedDiff = rotationDiff * elapsed * Math.PI / 2;
@@ -35,7 +25,6 @@ class Camera extends Entity {
 
             this.x = player.x + Math.cos(this.rotation - Math.PI / 2) * 200;
             this.y = player.y + Math.sin(this.rotation - Math.PI / 2) * 200;
-            // this.rotation = player.rotation + Math.PI / 2;
 
             // this.x = player.x;
             // this.y = player.y;

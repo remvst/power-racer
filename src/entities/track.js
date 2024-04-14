@@ -27,6 +27,9 @@ class TrackBit {
     }
 
     get angle() {
+        if (this.next && this.previous) {
+            return normalize(angleBetween(this.previous, this.next));
+        }
         if (this.next) return angleBetween(this, this.next);
         if (this.previous) return angleBetween(this.previous, this);
         return 0;
@@ -88,45 +91,80 @@ class Track extends Entity {
         // }
 
         this.addTrackBit(new TrackBit(0, 0));
-        this.addTrackBit(new TrackBit(100, 50));
-        this.addTrackBit(new TrackBit(200, 50));
-        this.extendTrack();
-        this.extendTrack();
-        this.extendTrack();
-        this.extendTrack();
-        this.extendTrack();
-        this.extendTrack();
-        this.extendTrack();
-        this.extendTrack();
-        this.extendTrack();
+        this.addTrackBit(new TrackBit(200, 0));
+        this.addTrackBit(new TrackBit(400, 0));
+        this.addTrackBit(new TrackBit(600, 0));
+        this.addTrackBit(new TrackBit(800, 0));
+
+        for (let i = 0 ; i < 20 ; i++) {
+            this.addCurve();
+            this.addStraightLine();
+        }
     }
 
-    extendTrack() {
+    extend(generateBits) {
+        const lastBit = this.trackBits[this.trackBits.length - 1]
+        const baseAngle = lastBit.angle;
+
+        const doAdd = (x, y) => {
+            const angleFromOrigin = Math.atan2(y, x);
+            const distFromOrigin = distP(0, 0, x, y);
+            const adjustedX = lastBit.x + Math.cos(baseAngle + angleFromOrigin) * distFromOrigin;
+            const adjustedY = lastBit.y + Math.sin(baseAngle + angleFromOrigin) * distFromOrigin;
+            return this.addTrackBit(new TrackBit(adjustedX, adjustedY));
+        }
+
+        const minFinalAngle = -Math.PI / 2;
+        const maxFinalAngle = Math.PI / 2;
+
+        generateBits(doAdd, minFinalAngle, maxFinalAngle);
+    }
+
+    addStraightLine() {
+        const length = rnd(200, 1000);
+        const bitCount = Math.ceil(length / 100);
+
+        this.extend((add) => {
+            for (let i = 1 ; i <= bitCount ; i++) {
+                add(
+                    length * i / bitCount,
+                    0,
+                );
+            }
+        });
+    }
+
+    addCurve() {
         const lastBit = this.trackBits[this.trackBits.length - 1]
         const baseAngle = this.trackBits[this.trackBits.length - 1].angle;
 
-        // const length = rnd(200, 400);
-        const length = 400;
+        this.extend((add, minFinalAngle, maxFinalAngle) => {
+            const finalCurveAngle = rnd(minFinalAngle, maxFinalAngle); // TODO random
 
-        const finalX = length;
-        const finalY = length * pick([-1, 1]);
+            const startRelativeAngle = 0;
+            const endRelativeAngle = normalize(finalCurveAngle - baseAngle);
 
-        const bits = length / 50;
+            const curveRadius = rnd(300, 1000);
 
-        const curve = (x) => Math.pow(x, 2);
+            const curveCenterX = 0;
+            const curveCenterY = Math.sin(endRelativeAngle) > 0 ? curveRadius : -curveRadius;
 
-        for (let i = 1 ; i <= bits ; i++) {
-            const progress = i / (bits - 1);
-            const x = progress * finalX;
-            const y = curve(progress) * finalY;
-            const angleFromOrigin = Math.atan2(y, x);
-            const distFromOrigin = distP(0, 0, x, y);
+            const totalCurveAngle = normalize(Math.abs(endRelativeAngle - startRelativeAngle));
+            const totalCurveDistance = (totalCurveAngle / (Math.PI * 2)) * (curveRadius * Math.PI * 2);
+            const bitCount = Math.ceil(totalCurveDistance / 100);
 
-            const adjustedX = lastBit.x + Math.cos(baseAngle + angleFromOrigin) * distFromOrigin;
-            const adjustedY = lastBit.y + Math.sin(baseAngle + angleFromOrigin) * distFromOrigin;
-            this.addTrackBit(new TrackBit(adjustedX, adjustedY));
-        }
-        // console.log('last index', this.trackBits.length - 1);
+            for (let i = 1 ; i <= bitCount ; i++) {
+                const progress = i / bitCount;
+
+                const angle = -Math.atan2(curveCenterY, 0) + progress * (endRelativeAngle - startRelativeAngle) + startRelativeAngle;
+
+                add(
+                    curveCenterX + Math.cos(angle) * curveRadius,
+                    curveCenterY + Math.sin(angle) * curveRadius,
+                );
+            }
+        });
+
     }
 
     addTrackBit(trackBit) {
@@ -136,6 +174,7 @@ class Track extends Entity {
             trackBit.previous = currentLast;
         }
         this.trackBits.push(trackBit);
+        return trackBit;
     }
 
     contains(x, y) {
