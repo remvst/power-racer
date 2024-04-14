@@ -225,7 +225,6 @@ class Track extends Entity {
     render() {
         ctx.fillStyle = 'red';
 
-        ctx.strokeStyle = 'white';
         // ctx.lineCap = 'round';
         // ctx.lineJoin = 'round';
 
@@ -243,6 +242,18 @@ class Track extends Entity {
         ctx.fill();
         ctx.globalAlpha = 1;
 
+        for (const bit of this.trackBits) {
+            if (!bit.next) continue;
+            ctx.fillStyle = ((bit.distance % 400) / 400) < 0.5 ? '#000' : '#111';
+            ctx.beginPath();
+            ctx.lineTo(bit.pointAt(-1).x, bit.pointAt(-1).y);
+            ctx.lineTo(bit.pointAt(1).x, bit.pointAt(1).y);
+            ctx.lineTo(bit.next.pointAt(1).x, bit.next.pointAt(1).y);
+            ctx.lineTo(bit.next.pointAt(-1).x, bit.next.pointAt(-1).y);
+            ctx.fill();
+        }
+
+        ctx.strokeStyle = '#fff';
         ctx.lineWidth = 30;
         for (const xOffset of [-1, 1]) {
             ctx.beginPath();
@@ -252,6 +263,7 @@ class Track extends Entity {
             ctx.stroke();
         }
 
+        ctx.strokeStyle = '#222';
         ctx.lineWidth = 2;
         for (const xOffset of [-0.33, 0.33]) {
             ctx.beginPath();

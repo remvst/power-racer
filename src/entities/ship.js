@@ -19,6 +19,10 @@ class Ship extends Entity {
             x: 0,
             y: 0,
         };
+
+        this.nextParticle = 0;
+        this.trailLeft = [];
+        this.trailRight = [];
     }
 
     cycle(elapsed) {
@@ -112,6 +116,45 @@ class Ship extends Entity {
             // this.y = closestBit.y + Math.sin(angle) * closestBit.width / 2;
         }
         firstItem(this.scene.category('track')).prune(this.closestBit.distance);
+
+        // const impactX = victim.x + rnd(-20, 20);
+        // const impactY = victim.y - 30 + rnd(-20, 20);
+
+        // this.nextParticle -=
+        this.nextParticle -= elapsed;
+
+        while (this.nextParticle <= 0) {
+            this.nextParticle += 1 / 240;
+
+            if (this.controls.accelerate) {
+                // this.addTrailParticle(-10 + rnd(-3, 3), -10 + rnd(-3, 3));
+                // this.addTrailParticle(-10 + rnd(-3, 3), 10 + rnd(-3, 3));
+                // this.addTrailParticle(-10, 0);
+            }
+        }
+
+        this.trailLeft.push({...this.relativeXY(-12, -12), age: this.age});
+        if (this.trailLeft.length > 60) this.trailLeft.shift();
+
+        this.trailRight.push({...this.relativeXY(-12, 12), age: this.age});
+        if (this.trailRight.length > 60) this.trailRight.shift();
+    }
+
+    addTrailParticle(relativeX, relativeY) {
+        const size = rnd(3, 6);
+
+        const { x, y } = this.relativeXY(relativeX, relativeY);
+
+        const angle = this.rotation + Math.PI;
+
+        this.scene.add(new Particle(
+            '#ccc',
+            [size, size + rnd(20, 40)],
+            [x, x + Math.cos(angle) * 20],
+            [y, y + Math.sin(angle) * 20],
+            rnd(0.5, 1),
+            [1, 0],
+        ));
     }
 
     render() {
@@ -131,6 +174,27 @@ class Ship extends Entity {
                 ctx.lineTo(pt[0], pt[1]);
             }
             ctx.fill();
+        });
+
+        ctx.wrap(() => {
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = '#08f';
+            ctx.lineCap = 'round';
+            for (let i = 0 ; i < this.trailLeft.length - 1 ; i++) {
+                ctx.globalAlpha = 1 - between(0, (this.age - this.trailLeft[i].age) * 2, 1);
+                ctx.beginPath();
+                ctx.moveTo(this.trailLeft[i].x, this.trailLeft[i].y);
+                ctx.lineTo(this.trailLeft[i + 1].x, this.trailLeft[i + 1].y);
+                ctx.stroke();
+            }
+
+            for (let i = 0 ; i < this.trailRight.length - 1 ; i++) {
+                ctx.globalAlpha = 1 - between(0, (this.age - this.trailRight[i].age) * 2, 1);
+                ctx.beginPath();
+                ctx.moveTo(this.trailRight[i].x, this.trailRight[i].y);
+                ctx.lineTo(this.trailRight[i + 1].x, this.trailRight[i + 1].y);
+                ctx.stroke();
+            }
         });
 
         ctx.wrap(() => {

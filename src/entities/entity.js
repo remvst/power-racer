@@ -41,6 +41,16 @@ class Entity {
         this.scene.remove(this);
     }
 
+    relativeXY(relativeX, relativeY) {
+        const relativeAngle = Math.atan2(relativeY, relativeX);
+        const relativeDistance = distP(0, 0, relativeX, relativeY);
+
+        const x = this.x + Math.cos(this.rotation + relativeAngle) * relativeDistance;
+        const y = this.y + Math.sin(this.rotation + relativeAngle) * relativeDistance;
+
+        return { x, y };
+    }
+
     cancelCameraOffset(camera) {
         ctx.translate(camera.x, camera.y);
         // ctx.scale(1 / camera.appliedZoom, 1 / camera.appliedZoom);
