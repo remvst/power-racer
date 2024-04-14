@@ -35,6 +35,29 @@ class HUD extends Entity {
             ctx.fillStyle = '#000';
             ctx.font = 'bold 24pt Impact';
             ctx.fillText('POWER', 0, 0);
-        })
+        });
+
+        ctx.wrap(() => {
+            ctx.translate(CANVAS_WIDTH - 200, CANVAS_HEIGHT - 200);
+
+            const speed = distP(0, 0, player.inertia.x, player.inertia.y);
+            const speedRatio = speed / player.maxSpeed;
+
+            ctx.shadowColor = '#000';
+            ctx.shadowOffsetX = 4;
+            ctx.shadowOffsetY = 4;
+
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 48pt Impact';
+            ctx.fillText(Math.round(speed).toString(), 0, 0);
+
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 20;
+            ctx.beginPath();
+            ctx.arc(0, 0, 100, Math.PI / 2, Math.PI / 2 + Math.PI * 2 * speedRatio);
+            ctx.stroke();
+        });
     }
 }

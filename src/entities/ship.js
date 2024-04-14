@@ -13,7 +13,7 @@ class Ship extends Entity {
 
         this.movementAngle = 0;
         this.speed = 0;
-        this.maxSpeed = 600;
+        this.maxSpeed = 800;
 
         this.inertia = {
             x: 0,
@@ -31,20 +31,28 @@ class Ship extends Entity {
         if (this.controls.left) this.rotation -= Math.PI * elapsed;
         if (this.controls.right) this.rotation += Math.PI * elapsed;
 
-        if (this.controls.accelerate) {
-            this.inertia.x += 800 * elapsed * Math.cos(this.rotation);
-            this.inertia.y += 800 * elapsed * Math.sin(this.rotation);
-
-            this.inertia.x = between(-this.maxSpeed, this.inertia.x, this.maxSpeed);
-            this.inertia.y = between(-this.maxSpeed, this.inertia.y, this.maxSpeed);
-        }
-
         // Lose inertia over time
         const inertiaAngle = Math.atan2(this.inertia.y, this.inertia.x);
         const inertiaDistance = distP(0, 0, this.inertia.x, this.inertia.y);
         const newDistance = Math.max(0, inertiaDistance - elapsed * 400);
         this.inertia.x = Math.cos(inertiaAngle) * newDistance;
         this.inertia.y = Math.sin(inertiaAngle) * newDistance;
+
+        const speed = distP(0, 0, this.inertia.x, this.inertia.y);
+        if (this.controls.accelerate && speed < this.maxSpeed) {
+            this.inertia.x += 1000 * elapsed * Math.cos(this.rotation);
+            this.inertia.y += 1000 * elapsed * Math.sin(this.rotation);
+
+            this.inertia.x = between(-this.maxSpeed, this.inertia.x, this.maxSpeed);
+            this.inertia.y = between(-this.maxSpeed, this.inertia.y, this.maxSpeed);
+
+            const speed = distP(0, 0, this.inertia.x, this.inertia.y);
+            if (speed > this.maxSpeed) {
+                const inertiaAngle = Math.atan2(this.inertia.y, this.inertia.x);
+                this.inertia.x = Math.cos(inertiaAngle) * this.maxSpeed;
+                this.inertia.y = Math.sin(inertiaAngle) * this.maxSpeed;
+            }
+        }
 
         if (this.controls.brake) {
             const inertiaAngle = Math.atan2(this.inertia.y, this.inertia.x);
