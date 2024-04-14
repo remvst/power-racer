@@ -24,7 +24,7 @@ class HUD extends Entity {
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, 40, -(CANVAS_HEIGHT - 40));
 
-            ctx.fillStyle = '#fff';
+            ctx.fillStyle = player.power > 0.3 ? '#fff' : '#f00';
             ctx.fillRect(0, 0, 40, -(CANVAS_HEIGHT - 40) * player.power);
 
             ctx.translate(20, -10);
@@ -37,7 +37,7 @@ class HUD extends Entity {
         });
 
         ctx.wrap(() => {
-            ctx.translate(CANVAS_WIDTH - 200, CANVAS_HEIGHT - 200);
+            ctx.translate(CANVAS_WIDTH - 200, CANVAS_HEIGHT - 140);
 
             const speed = distP(0, 0, player.inertia.x, player.inertia.y);
             const speedRatio = speed / player.maxSpeed;

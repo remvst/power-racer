@@ -6,6 +6,8 @@ class Camera extends Entity {
         this.affectedBySpeedRatio = false;
 
         this.minX = -CANVAS_WIDTH / 2;
+
+        this.shakeEnd = 0;
     }
 
     get appliedZoom() {
@@ -26,7 +28,7 @@ class Camera extends Entity {
             this.x = player.x + Math.cos(this.rotation - Math.PI / 2) * 200 / this.zoom;
             this.y = player.y + Math.sin(this.rotation - Math.PI / 2) * 200 / this.zoom;
 
-            const targetZoom = 1 - Math.min(1, player.speed / player.maxSpeed) * 0.25;
+            const targetZoom = 1 - Math.min(1, player.speed / player.maxSpeed) * 0.35;
             const zoomDiff = targetZoom - this.zoom;
             const appliedZoomDiff = zoomDiff * elapsed * 0.5;
             this.zoom += appliedZoomDiff;
@@ -38,6 +40,15 @@ class Camera extends Entity {
 
             // this.rotation = Math.PI / 16;
         }
+
+        if (this.age < this.shakeEnd) {
+            this.x += rnd(-20, 20);
+            this.y += rnd(-20, 20);
+        }
+    }
+
+    shake(duration) {
+        this.shakeEnd = this.age + duration;
     }
 
     zoomTo(toValue) {

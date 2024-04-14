@@ -88,7 +88,7 @@ class Track extends Entity {
         this.trackBits = [];
 
         for (let distance = 0 ; distance < 2000 ; distance += 200) {
-            this.addTrackBit(new TrackBit(0, -distance));
+            this.addTrackBit(new TrackBit(distance, 0));
         }
     }
 
@@ -96,12 +96,18 @@ class Track extends Entity {
         const lastBit = this.trackBits[this.trackBits.length - 1];
         const baseAngle = lastBit.angle;
 
+        const width = Math.random() < 0.2
+            ? pick([600, 800, 400])
+            : lastBit.width;
+
         const doAdd = (x, y) => {
             const angleFromOrigin = Math.atan2(y, x);
             const distFromOrigin = distP(0, 0, x, y);
             const adjustedX = lastBit.x + Math.cos(baseAngle + angleFromOrigin) * distFromOrigin;
             const adjustedY = lastBit.y + Math.sin(baseAngle + angleFromOrigin) * distFromOrigin;
-            return this.addTrackBit(new TrackBit(adjustedX, adjustedY));
+            const bit = new TrackBit(adjustedX, adjustedY);
+            bit.width = width;
+            return this.addTrackBit(bit);
         }
 
         generateBits(doAdd, lastBit);
@@ -118,7 +124,7 @@ class Track extends Entity {
     }
 
     addStraightLine() {
-        const length = rnd(200, 1000);
+        const length = rnd(200, 2000);
         const bitCount = Math.ceil(length / 100);
 
         this.extend((add) => {
@@ -143,7 +149,7 @@ class Track extends Entity {
             const startRelativeAngle = 0;
             const endRelativeAngle = normalize(finalCurveAngle - baseAngle);
 
-            const curveRadius = rnd(300, 800);
+            const curveRadius = rnd(300, 1500);
 
             const curveCenterX = 0;
             const curveCenterY = Math.sin(endRelativeAngle) > 0 ? curveRadius : -curveRadius;
@@ -173,6 +179,7 @@ class Track extends Entity {
             trackBit.distance = currentLast.distance + dist(trackBit, trackBit.previous);
         }
         this.trackBits.push(trackBit);
+        // trackBit.width = 600 + Math.sin(trackBit.distance * Math.PI * 2 / 4000) * 200;
         return trackBit;
     }
 

@@ -38,7 +38,7 @@ class Ship extends Entity {
     }
 
     get effectiveAcceleration() {
-        return this.isBoosted ? 2000 : 1000;
+        return this.isBoosted ? 4000 : 1000;
     }
 
     cycle(elapsed) {
@@ -75,7 +75,7 @@ class Ship extends Entity {
 
             const inertiaAngle = Math.atan2(this.inertia.y, this.inertia.x);
             const inertiaDistance = distP(0, 0, this.inertia.x, this.inertia.y);
-            const newDistance = Math.max(0, inertiaDistance - elapsed * 200);
+            const newDistance = Math.max(0, inertiaDistance - elapsed * 800);
             this.inertia.x = Math.cos(inertiaAngle) * newDistance;
             this.inertia.y = Math.sin(inertiaAngle) * newDistance;
         }
@@ -103,6 +103,11 @@ class Ship extends Entity {
         const track = firstItem(this.scene.category('track'));
         if (!track) return;
 
+
+        if (this.closestBit && !this.closestBit.contains(this.x, this.y)) {
+            this.closestBit = this.closestBit.next;
+        }
+
         if (this.closestBit && !this.closestBit.contains(this.x, this.y)) {
             this.closestBit = null;
         }
@@ -111,33 +116,47 @@ class Ship extends Entity {
         if (!this.closestBit) return;
 
         if (!this.closestBit.contains(this.x, this.y)) {
-            const adjustedLeft = this.closestBit.pointAt(-0.8);
-            const adjustedRight = this.closestBit.pointAt(0.8);
+            const angleToCenter = angleBetween(this, this.closestBit);
+            if (Math.abs(normalize(angleToCenter - this.rotation)) > Math.PI / 2) {
+                this.rotation = this.closestBit.angle;
+            }
 
-            const best = dist(adjustedLeft, this) < dist(adjustedRight, this)
-                ? adjustedLeft
-                : adjustedRight;
-            this.x = best.x;
-            this.y = best.y;
+            const angle = angleBetween(this.closestBit, this);
+            this.x = this.closestBit.x + Math.cos(angle) * this.closestBit.width / 2;
+            this.y = this.closestBit.y + Math.sin(angle) * this.closestBit.width / 2;
 
-            // const angle = angleBetween(closestBit, this);
-            // this.x = closestBit.x + Math.cos(angle) * closestBit.width / 2;
-            // this.y = closestBit.y + Math.sin(angle) * closestBit.width / 2;
+            const speed = this.speed;
+            this.inertia.x = Math.cos(angleToCenter) * speed / 4;
+            this.inertia.y = Math.sin(angleToCenter) * speed / 4;
+
+            this.power -= 0.1;
+            this.lastBoost = 0;
+
+            firstItem(this.scene.category('camera')).shake(0.3);
+
+            for (let i = 0 ; i < 50 ; i++) {
+                const size = rnd(2, 4);
+                const x = this.x + rnd(-20, 20);
+                const y = this.y + rnd(-20, 20);
+                const particleAngle = Math.random() * Math.PI * 2;
+
+                this.scene.add(new Particle(
+                    '#ff0',
+                    [size, size + rnd(4, 8)],
+                    [x, x + Math.cos(particleAngle) * 100],
+                    [y, y + Math.sin(particleAngle) * 100],
+                    rnd(0.2, 0.4),
+                    [1, 1],
+                ));
+            }
         }
         firstItem(this.scene.category('track')).prune(this.closestBit.distance);
 
-        // const impactX = victim.x + rnd(-20, 20);
-        // const impactY = victim.y - 30 + rnd(-20, 20);
-
-        // this.nextParticle -=
         this.nextParticle -= elapsed;
-
         while (this.nextParticle <= 0) {
             this.nextParticle += 1 / 240;
 
             if (this.isBoosted) {
-                // this.addTrailParticle(-10 + rnd(-3, 3), -10 + rnd(-3, 3));
-                // this.addTrailParticle(-10 + rnd(-3, 3), 10 + rnd(-3, 3));
                 this.addTrailParticle(-10, 0);
             }
         }
@@ -159,8 +178,8 @@ class Ship extends Entity {
         this.scene.add(new Particle(
             '#ccc',
             [size, size + rnd(20, 40)],
-            [x, x + Math.cos(angle) * 20],
-            [y, y + Math.sin(angle) * 20],
+            [x, x + Math.cos(angle) * 200],
+            [y, y + Math.sin(angle) * 200],
             rnd(0.5, 1),
             [1, 0],
         ));
