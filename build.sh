@@ -20,6 +20,7 @@ for file in \
     util/resizer.js \
     util/first-item.js \
     util/colors.js \
+    util/format-time.js \
     input/keyboard.js \
     graphics/create-canvas.js \
     graphics/wrap.js \

@@ -99,7 +99,7 @@ class Track extends Entity {
         const player = firstItem(this.scene.category('player'));
 
         const width = Math.random() < 0.2
-            ? pick([0.5, 1, 1.5]) * player.maxSpeed
+            ? pick([0.5, 1, 1.5]) * player.maxSpeed * 0.8
             : lastBit.width;
 
         const doAdd = (x, y) => {
@@ -128,7 +128,7 @@ class Track extends Entity {
     addStraightLine() {
         const player = firstItem(this.scene.category('player'));
 
-        const length = rnd(0.3, 2) * player.maxSpeed;
+        const length = rnd(0.3, 2) * player.maxSpeed * 0.8;
         const bitCount = Math.ceil(length / 100);
 
         this.extend((add) => {
@@ -155,7 +155,7 @@ class Track extends Entity {
             const startRelativeAngle = 0;
             const endRelativeAngle = normalize(finalCurveAngle - baseAngle);
 
-            const curveRadius = rnd(1, 3) * player.maxSpeed;
+            const curveRadius = rnd(1, 3) * player.maxSpeed * 0.8;
 
             const curveCenterX = 0;
             const curveCenterY = Math.sin(endRelativeAngle) > 0 ? curveRadius : -curveRadius;

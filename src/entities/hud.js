@@ -5,9 +5,61 @@ class HUD extends Entity {
         const player = firstItem(this.scene.category('player'));
         if (!player) return;
 
+        ctx.wrap(() => {
+            const track = firstItem(this.scene.category('track'));
+
+            ctx.translate(CANVAS_WIDTH / 2, 120);
+
+            ctx.beginPath();
+            ctx.rect(-200, -100, 400, 200);
+            ctx.clip();
+
+            ctx.translate(0, 80);
+            ctx.scale(1 / 20, 1 / 20);
+            ctx.rotate(-camera.rotation);
+            ctx.translate(-camera.x, -camera.y);
+
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            for (let i = 0 ; i < track.trackBits.length ; i++) {
+                const bit = track.trackBits[i];
+                ctx.lineTo(bit.pointAt(-1).x, bit.pointAt(-1).y);
+            }
+            for (let i = track.trackBits.length - 1 ; i >= 0 ; i--) {
+                const bit = track.trackBits[i];
+                ctx.lineTo(bit.pointAt(1).x, bit.pointAt(1).y);
+            }
+            ctx.fill();
+        });
+
         ctx.shadowColor = '#000';
         ctx.shadowOffsetX = 4;
         ctx.shadowOffsetY = 4;
+
+        ctx.wrap(() => {
+            ctx.translate(20, 40);
+
+            for (const [label, value] of [
+                // ['TIME', formatTime(player.age)],
+                ['SCORE', Math.round(player.age * 200).toLocaleString('en')],
+                ['ZONE', player.level + 1],
+            ]) {
+                ctx.textBaseline = 'middle';
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#fff';
+
+                ctx.font = 'italic bold 12pt Impact';
+                ctx.fillText(label, 40, 0);
+
+                // const width = ctx.measureText(label).width + 20;
+                ctx.textAlign = 'left';
+                ctx.font = 'bold 48pt Impact';
+                ctx.fillText(value, 60, 0);
+
+                ctx.translate(0, 65);
+            }
+        })
+
 
         if (player.closestBit && Math.abs(normalize(player.rotation - player.closestBit.angle)) > Math.PI * 4 / 5) {
             ctx.font = 'bold 48pt Impact';
