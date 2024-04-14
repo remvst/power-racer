@@ -69,9 +69,7 @@ class Scene {
             ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2)
             ctx.rotate(-camera.rotation);
             ctx.scale(camera.zoom, camera.zoom);
-            ctx.translate(-CANVAS_WIDTH / 2, -CANVAS_HEIGHT / 2)
             ctx.translate(-camera.x, -camera.y);
-            ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
 
             for (const entity of this.entities) {
                 ctx.wrap(() => entity.render());

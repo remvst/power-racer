@@ -11,13 +11,14 @@ class Ship extends Entity {
             accelerate: 0,
         };
 
-        this.movementAngle = 0;
         this.maxSpeed = 800;
 
         this.inertia = {
             x: 0,
             y: 0,
         };
+
+        this.lastBoost = -99;
 
         this.nextParticle = 0;
         this.trailLeft = [];
@@ -26,6 +27,18 @@ class Ship extends Entity {
 
     get speed() {
         return distP(0, 0, this.inertia.x, this.inertia.y);
+    }
+
+    get isBoosted() {
+        return this.age - this.lastBoost < 1;
+    }
+
+    get effectiveMaxSpeed() {
+        return this.maxSpeed * (this.isBoosted ? 1.5 : 1);
+    }
+
+    get effectiveAcceleration() {
+        return this.isBoosted ? 2000 : 1000;
     }
 
     cycle(elapsed) {
@@ -41,40 +54,31 @@ class Ship extends Entity {
         this.inertia.x = Math.cos(inertiaAngle) * newDistance;
         this.inertia.y = Math.sin(inertiaAngle) * newDistance;
 
-        const { speed } = this;
-        if (this.controls.accelerate && speed < this.maxSpeed) {
-            this.inertia.x += 1000 * elapsed * Math.cos(this.rotation);
-            this.inertia.y += 1000 * elapsed * Math.sin(this.rotation);
+        const { speed, effectiveMaxSpeed, effectiveAcceleration } = this;
+        if ((this.controls.accelerate || this.isBoosted) && speed < effectiveMaxSpeed) {
+            this.inertia.x += this.effectiveAcceleration * elapsed * Math.cos(this.rotation);
+            this.inertia.y += this.effectiveAcceleration * elapsed * Math.sin(this.rotation);
 
-            this.inertia.x = between(-this.maxSpeed, this.inertia.x, this.maxSpeed);
-            this.inertia.y = between(-this.maxSpeed, this.inertia.y, this.maxSpeed);
+            this.inertia.x = between(-effectiveMaxSpeed, this.inertia.x, effectiveMaxSpeed);
+            this.inertia.y = between(-effectiveMaxSpeed, this.inertia.y, effectiveMaxSpeed);
 
             const { speed } = this;
-            if (speed > this.maxSpeed) {
+            if (speed > effectiveMaxSpeed) {
                 const inertiaAngle = Math.atan2(this.inertia.y, this.inertia.x);
-                this.inertia.x = Math.cos(inertiaAngle) * this.maxSpeed;
-                this.inertia.y = Math.sin(inertiaAngle) * this.maxSpeed;
+                this.inertia.x = Math.cos(inertiaAngle) * effectiveMaxSpeed;
+                this.inertia.y = Math.sin(inertiaAngle) * effectiveMaxSpeed;
             }
         }
 
         if (this.controls.brake) {
+            this.lastBoost = 0;
+
             const inertiaAngle = Math.atan2(this.inertia.y, this.inertia.x);
             const inertiaDistance = distP(0, 0, this.inertia.x, this.inertia.y);
             const newDistance = Math.max(0, inertiaDistance - elapsed * 200);
             this.inertia.x = Math.cos(inertiaAngle) * newDistance;
             this.inertia.y = Math.sin(inertiaAngle) * newDistance;
         }
-
-        // this.inertia.x += between(
-        //     -elapsed * 100,
-        //     -this.inertia.x,
-        //     elapsed * 100,
-        // );
-        // this.inertia.y += between(
-        //     -elapsed * 100,
-        //     -this.inertia.y,
-        //     elapsed * 100,
-        // )
 
         const angleDiff = normalize(normalize(this.rotation) - normalize(this.movementAngle));
         const speedRatio = this.speed / this.maxSpeed;
@@ -85,16 +89,19 @@ class Ship extends Entity {
             elapsed * angleCatchUp,
         );
 
-        // this.x += Math.cos(this.movementAngle) * this.speed * elapsed;
-        // this.y += Math.sin(this.movementAngle) * this.speed * elapsed;
-
         this.x += this.inertia.x * elapsed;
         this.y += this.inertia.y * elapsed;
 
+        this.power = between(
+            0,
+            this.power + (this.isBoosted
+                ? elapsed * 0.3
+                : elapsed * -0.05),
+            1,
+        );
+
         const track = firstItem(this.scene.category('track'));
         if (!track) return;
-
-        const previousDistance = this.closestBit?.distance || 0;
 
         if (this.closestBit && !this.closestBit.contains(this.x, this.y)) {
             this.closestBit = null;
@@ -128,10 +135,10 @@ class Ship extends Entity {
         while (this.nextParticle <= 0) {
             this.nextParticle += 1 / 240;
 
-            if (this.controls.accelerate) {
+            if (this.isBoosted) {
                 // this.addTrailParticle(-10 + rnd(-3, 3), -10 + rnd(-3, 3));
                 // this.addTrailParticle(-10 + rnd(-3, 3), 10 + rnd(-3, 3));
-                // this.addTrailParticle(-10, 0);
+                this.addTrailParticle(-10, 0);
             }
         }
 
@@ -220,10 +227,6 @@ class Ship extends Entity {
             ctx.moveTo(0, 0);
             ctx.lineTo(this.inertia.x, this.inertia.y);
             ctx.stroke();
-
-            // ctx.beginPath();
-            // ctx.arc(Math.cos(this.movementAngle) * this.speed, Math.sin(this.movementAngle) * this.speed, 10, 0, Math.PI * 2);
-            // ctx.stroke();
         });
 
         ctx.wrap(() => {
@@ -237,5 +240,13 @@ class Ship extends Entity {
             ctx.lineTo(this.closestBit.x, this.closestBit.y);
             ctx.stroke();
         });
+    }
+
+    boost() {
+        const { speed } = this;
+        const newSpeed = Math.min(this.maxSpeed * 1.5, speed * 2);
+
+        const inertiaAngle = Math.atan2(this.inertia.y, this.inertia.x);
+        this.lastBoost = this.age;
     }
 }

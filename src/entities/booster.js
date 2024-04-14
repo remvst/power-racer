@@ -7,15 +7,7 @@ class Booster extends Entity {
 
         if (dist(player, this) < 50) {
             this.scene.remove(this);
-
-            const { speed } = player;
-            const newSpeed = Math.min(player.maxSpeed * 1.5, speed * 2);
-
-            const inertiaAngle = Math.atan2(player.inertia.y, player.inertia.x);
-
-            player.power = 1;
-            player.inertia.x = Math.cos(inertiaAngle) * newSpeed;
-            player.inertia.y = Math.sin(inertiaAngle) * newSpeed;
+            player.boost();
         }
     }
 

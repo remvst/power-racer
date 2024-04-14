@@ -87,20 +87,9 @@ class Track extends Entity {
         this.categories.push('track');
         this.trackBits = [];
 
-        // for (let y = -500 ; y < 500 ; y += 50) {
-        //     this.addTrackBit(new TrackBit(Math.sin(y * Math.PI * 2 / 1000) * 200, -y));
-        // }
-
-        this.addTrackBit(new TrackBit(0, 0));
-        this.addTrackBit(new TrackBit(200, 0));
-        this.addTrackBit(new TrackBit(400, 0));
-        this.addTrackBit(new TrackBit(600, 0));
-        this.addTrackBit(new TrackBit(800, 0));
-
-        // for (let i = 0 ; i < 20 ; i++) {
-        //     this.addCurve();
-        //     this.addStraightLine();
-        // }
+        for (let distance = 0 ; distance < 2000 ; distance += 200) {
+            this.addTrackBit(new TrackBit(0, -distance));
+        }
     }
 
     extend(generateBits) {
@@ -117,7 +106,10 @@ class Track extends Entity {
 
         generateBits(doAdd, lastBit);
 
-        const booster = pick([new Booster(), new Drain()]);
+        const booster = pick([
+            new Booster(),
+            // new Drain(),
+        ]);
         const position = lastBit.pointAt(pick([0, 0.6, -0.6]));
         booster.x = position.x;
         booster.y = position.y;
@@ -224,17 +216,15 @@ class Track extends Entity {
         // Extend
         const lastBit = this.trackBits[this.trackBits.length - 1];
         if (lastBit.distance < currentDistance + CANVAS_WIDTH * 2) {
-            this.addCurve();
+            const curveCount = rnd(1, 4);
+            for (let i = 0 ; i < curveCount ; i++) {
+                this.addCurve();
+            }
             this.addStraightLine();
         }
     }
 
     render() {
-        ctx.fillStyle = 'red';
-
-        // ctx.lineCap = 'round';
-        // ctx.lineJoin = 'round';
-
         ctx.fillStyle = '#000';
         ctx.globalAlpha = 0.8;
         ctx.beginPath();

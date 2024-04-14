@@ -26,17 +26,17 @@ class Camera extends Entity {
             this.x = player.x + Math.cos(this.rotation - Math.PI / 2) * 200 / this.zoom;
             this.y = player.y + Math.sin(this.rotation - Math.PI / 2) * 200 / this.zoom;
 
-            const targetZoom = 1 - (player.speed / player.maxSpeed) * 0.25;
+            const targetZoom = 1 - Math.min(1, player.speed / player.maxSpeed) * 0.25;
             const zoomDiff = targetZoom - this.zoom;
             const appliedZoomDiff = zoomDiff * elapsed * 0.5;
-
             this.zoom += appliedZoomDiff;
 
             // this.x = player.x;
             // this.y = player.y;
             // this.rotation = 0;
+            // this.zoom = 1;
 
-            // this.zoom = 1 - (player.speed / player.maxSpeed) * 0.5;
+            // this.rotation = Math.PI / 16;
         }
     }
 
@@ -45,6 +45,38 @@ class Camera extends Entity {
             this.previousInterpolator.remove();
         }
         return this.scene.add(new Interpolator(this, 'zoom', this.zoom, toValue, 1)).await();
+    }
+
+    positionOnScreen(pt) {
+        // TODO apply rotation
+
+
+        // ctx.translate(camera.x, camera.y);
+        // ctx.rotate(camera.rotation);
+        // ctx.translate(-CANVAS_WIDTH / 2, -CANVAS_HEIGHT / 2);
+
+
+        const baseX = pt.x;
+        const baseY = pt.y;
+
+        const shiftedX = baseX - this.x;
+        const shiftedY = baseY - this.y;
+
+        const rotatedX = shiftedX * Math.cos(this.rotation) + shiftedY * Math.sin(this.rotation);
+        const rotatedY = -shiftedX * Math.sin(this.rotation) + shiftedY * Math.cos(this.rotation);
+
+        const reshiftedX = rotatedX + CANVAS_WIDTH / 2;
+        const reshiftedY = rotatedY + CANVAS_HEIGHT / 2;
+
+        return {
+            x: reshiftedX,
+            y: reshiftedY,
+        }
+
+        return {
+            x: (pt.x - this.x) + CANVAS_WIDTH / 2,
+            y: (pt.y - this.y) + CANVAS_HEIGHT / 2,
+        };
     }
 
     // render() {
