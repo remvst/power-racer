@@ -15,17 +15,25 @@ class Booster extends Entity {
         ctx.translate(this.x, this.y);
         ctx.rotate(this.rotation);
 
-        ctx.globalAlpha = Math.sin(this.age * Math.PI * 2) * 0.25 + 0.5;
-        ctx.strokeStyle = '#0f0';
-        ctx.lineWidth = 10;
+        ctx.lineWidth = 15;
 
         for (let i = 0 ; i < 3 ; i++) {
-            ctx.translate(-20, 0)
-            ctx.beginPath();
-            ctx.lineTo(-20, -20);
-            ctx.lineTo(0, 0);
-            ctx.lineTo(-20, 20);
-            ctx.stroke();
+            ctx.wrap(() => {
+                ctx.globalAlpha = Math.sin((this.age + i * 0.2) * Math.PI * 2) * 0.25 + 0.5;
+                ctx.strokeStyle = '#0f0';
+
+                ctx.translate(45 - i * 30, 0);
+                ctx.beginPath();
+                ctx.lineTo(-30, -30);
+                ctx.lineTo(0, 0);
+                ctx.lineTo(-30, 30);
+                ctx.stroke();
+            });
         }
+
+        // ctx.strokeStyle = '#0f0';
+        // ctx.beginPath();
+        // ctx.arc(0, 0, 50, 0, Math.PI * 2);
+        // ctx.stroke();
     }
 }

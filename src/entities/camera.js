@@ -8,6 +8,8 @@ class Camera extends Entity {
         this.minX = -CANVAS_WIDTH / 2;
 
         this.shakeEnd = 0;
+
+        this.rotation = Math.PI / 2;
     }
 
     get appliedZoom() {
@@ -28,7 +30,11 @@ class Camera extends Entity {
             this.x = player.x + Math.cos(this.rotation - Math.PI / 2) * 200 / this.zoom;
             this.y = player.y + Math.sin(this.rotation - Math.PI / 2) * 200 / this.zoom;
 
-            const targetZoom = 1 - Math.min(1, player.speed / player.maxSpeed) * 0.35;
+            const targetZoom = interpolate(
+                player.power ? 1 : 2,
+                0.5,
+                player.speed / player.maxSpeed,
+            );
             const zoomDiff = targetZoom - this.zoom;
             const appliedZoomDiff = zoomDiff * elapsed * 0.5;
             this.zoom += appliedZoomDiff;

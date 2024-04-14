@@ -34,6 +34,7 @@ class Ship extends Entity {
     }
 
     get effectiveMaxSpeed() {
+        if (!this.power) return 0;
         return this.maxSpeed * (this.isBoosted ? 1.5 : 1);
     }
 
@@ -59,8 +60,8 @@ class Ship extends Entity {
 
         const { speed, effectiveMaxSpeed, effectiveAcceleration } = this;
         if ((this.controls.accelerate || this.isBoosted) && speed < effectiveMaxSpeed) {
-            this.inertia.x += this.effectiveAcceleration * elapsed * Math.cos(this.rotation);
-            this.inertia.y += this.effectiveAcceleration * elapsed * Math.sin(this.rotation);
+            this.inertia.x += effectiveAcceleration * elapsed * Math.cos(this.rotation);
+            this.inertia.y += effectiveAcceleration * elapsed * Math.sin(this.rotation);
 
             this.inertia.x = between(-effectiveMaxSpeed, this.inertia.x, effectiveMaxSpeed);
             this.inertia.y = between(-effectiveMaxSpeed, this.inertia.y, effectiveMaxSpeed);
@@ -164,25 +165,30 @@ class Ship extends Entity {
             }
         }
 
-        this.trailLeft.push({...this.relativeXY(-12, -12), age: this.age});
+        const color = this.isBoosted ? '#0f0' : '#08f';
+        this.trailLeft.push({...this.relativeXY(-12, -12), age: this.age, color});
         if (this.trailLeft.length > 60) this.trailLeft.shift();
 
-        this.trailRight.push({...this.relativeXY(-12, 12), age: this.age});
+        this.trailRight.push({...this.relativeXY(-12, 12), age: this.age, color});
         if (this.trailRight.length > 60) this.trailRight.shift();
+
+        if (this.power <= 0 && this.speed <= 0) {
+            this.explode();
+        }
     }
 
     addTrailParticle(relativeX, relativeY) {
-        const size = rnd(3, 6);
+        const size = rnd(2, 4);
 
         const { x, y } = this.relativeXY(relativeX, relativeY);
 
-        const angle = this.rotation + Math.PI;
+        const angle = Math.random() * Math.PI * 2;
 
         this.scene.add(new Particle(
             '#ccc',
-            [size, size + rnd(20, 40)],
-            [x, x + Math.cos(angle) * 200],
-            [y, y + Math.sin(angle) * 200],
+            [size, size + rnd(15, 20)],
+            [x, x + Math.cos(angle) * 50],
+            [y, y + Math.sin(angle) * 50],
             rnd(0.5, 1),
             [1, 0],
         ));
@@ -212,6 +218,7 @@ class Ship extends Entity {
             ctx.strokeStyle = '#08f';
             ctx.lineCap = 'round';
             for (let i = 0 ; i < this.trailLeft.length - 1 ; i++) {
+                ctx.strokeStyle = this.trailLeft[i].color;
                 ctx.globalAlpha = 1 - between(0, (this.age - this.trailLeft[i].age) * 2, 1);
                 ctx.beginPath();
                 ctx.moveTo(this.trailLeft[i].x, this.trailLeft[i].y);
@@ -220,6 +227,7 @@ class Ship extends Entity {
             }
 
             for (let i = 0 ; i < this.trailRight.length - 1 ; i++) {
+                ctx.strokeStyle = this.trailRight[i].color;
                 ctx.globalAlpha = 1 - between(0, (this.age - this.trailRight[i].age) * 2, 1);
                 ctx.beginPath();
                 ctx.moveTo(this.trailRight[i].x, this.trailRight[i].y);
@@ -265,10 +273,45 @@ class Ship extends Entity {
     }
 
     boost() {
-        const { speed } = this;
-        const newSpeed = Math.min(this.maxSpeed * 1.5, speed * 2);
-
-        const inertiaAngle = Math.atan2(this.inertia.y, this.inertia.x);
         this.lastBoost = this.age;
+
+        for (let i = 0 ; i < 50 ; i++) {
+            const size = rnd(4, 8);
+            const x = this.x + rnd(-20, 20);
+            const y = this.y + rnd(-20, 20);
+            const particleAngle = Math.random() * Math.PI * 2;
+
+            this.scene.add(new Particle(
+                '#0f0',
+                [size, size + rnd(4, 8)],
+                [x, x + Math.cos(particleAngle) * 100],
+                [y, y + Math.sin(particleAngle) * 100],
+                rnd(0.3, 0.6),
+                [1, 0],
+            ));
+        }
+    }
+
+    explode() {
+        for (let i = 0 ; i < 100 ; i++) {
+            const size = rnd(5, 10);
+            const x = this.x + rnd(-20, 20);
+            const y = this.y + rnd(-20, 20);
+            const particleAngle = Math.random() * Math.PI * 2;
+
+            const dist = rnd(50, 100);
+
+            this.scene.add(new Particle(
+                pick(['#ff0', '#f00', '#f80']),
+                [size, size + rnd(5, 10)],
+                [x, x + Math.cos(particleAngle) * dist],
+                [y, y + Math.sin(particleAngle) * dist],
+                rnd(0.1, 0.5),
+                [1, 1],
+            ));
+        }
+
+        firstItem(this.scene.category('camera')).shake(0.3);
+        this.scene.remove(this);
     }
 }

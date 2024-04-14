@@ -87,7 +87,7 @@ class Track extends Entity {
         this.categories.push('track');
         this.trackBits = [];
 
-        for (let distance = 0 ; distance < 2000 ; distance += 200) {
+        for (let distance = -500 ; distance < 2000 ; distance += 200) {
             this.addTrackBit(new TrackBit(distance, 0));
         }
     }
