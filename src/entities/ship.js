@@ -112,7 +112,6 @@ class Ship extends Entity {
                 : elapsed * -0.05),
             1,
         );
-        this.power = 1;
 
         const track = firstItem(this.scene.category('track'));
         if (!track) return;
