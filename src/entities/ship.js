@@ -23,6 +23,7 @@ class Ship extends Entity {
         this.trailRight = [];
 
         this.boostCount = 0;
+        this.score = 0;
 
         this.setLevel(0);
     }
@@ -46,6 +47,9 @@ class Ship extends Entity {
 
     cycle(elapsed) {
         super.cycle(elapsed);
+
+        const prevX = this.x;
+        const prevY = this.y;
 
         if (this.controls.left) this.rotation -= Math.PI * elapsed;
         if (this.controls.right) this.rotation += Math.PI * elapsed;
@@ -108,7 +112,6 @@ class Ship extends Entity {
 
         const track = firstItem(this.scene.category('track'));
         if (!track) return;
-
 
         if (this.closestBit && !this.closestBit.contains(this.x, this.y)) {
             this.closestBit = this.closestBit.next;
@@ -177,6 +180,8 @@ class Ship extends Entity {
         if (this.power <= 0 && this.speed <= 0) {
             this.explode();
         }
+
+        this.score = this.closestBit.index * 10;
     }
 
     addTrailParticle(relativeX, relativeY) {

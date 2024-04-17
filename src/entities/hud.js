@@ -7,6 +7,7 @@ class HUD extends Entity {
 
         ctx.wrap(() => {
             const track = firstItem(this.scene.category('track'));
+            ctx.globalAlpha = 0.5;
 
             ctx.translate(CANVAS_WIDTH / 2, 120);
 
@@ -41,7 +42,7 @@ class HUD extends Entity {
 
             for (const [label, value] of [
                 // ['TIME', formatTime(player.age)],
-                ['SCORE', Math.round(player.age * 200).toLocaleString('en')],
+                ['SCORE', Math.round(player.score).toLocaleString('en')],
                 ['ZONE', player.level + 1],
             ]) {
                 ctx.textBaseline = 'middle';

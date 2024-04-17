@@ -25,6 +25,7 @@ class TrackBit {
         this.next = null;
         this.previous = null;
         this.distance = 0;
+        this.index = 0;
     }
 
     get angle() {
@@ -99,7 +100,7 @@ class Track extends Entity {
         const player = firstItem(this.scene.category('player'));
 
         const width = Math.random() < 0.2
-            ? pick([0.5, 1, 1.5]) * player.maxSpeed * 0.8
+            ? pick([0.8, 1, 1.2]) * player.maxSpeed * 0.8
             : lastBit.width;
 
         const doAdd = (x, y) => {
@@ -183,6 +184,7 @@ class Track extends Entity {
             currentLast.next = trackBit;
             trackBit.previous = currentLast;
             trackBit.distance = currentLast.distance + dist(trackBit, trackBit.previous);
+            trackBit.index = currentLast.index + 1;
         }
         this.trackBits.push(trackBit);
         return trackBit;
@@ -227,7 +229,7 @@ class Track extends Entity {
 
         // Extend
         const lastBit = this.trackBits[this.trackBits.length - 1];
-        if (lastBit.distance < currentDistance + CANVAS_WIDTH * 2) {
+        if (lastBit.distance < currentDistance + CANVAS_WIDTH * 4) {
             const curveCount = rnd(1, 4);
             for (let i = 0 ; i < curveCount ; i++) {
                 this.addCurve();

@@ -37,6 +37,7 @@ for file in \
     entities/drain.js \
     entities/animations/particle.js \
     entities/animations/color-change.js \
+    sound/speech.js \
     scene.js \
     level.js \
     main.js \
