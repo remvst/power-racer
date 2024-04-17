@@ -27,6 +27,7 @@ for file in \
     entities/entity.js \
     entities/background.js \
     entities/track.js \
+    entities/track-perspective.js \
     entities/track-tester.js \
     entities/camera.js \
     entities/interpolator.js \

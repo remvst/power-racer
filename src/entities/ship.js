@@ -48,9 +48,6 @@ class Ship extends Entity {
     cycle(elapsed) {
         super.cycle(elapsed);
 
-        const prevX = this.x;
-        const prevY = this.y;
-
         if (this.controls.left) this.rotation -= Math.PI * elapsed;
         if (this.controls.right) this.rotation += Math.PI * elapsed;
 
@@ -115,6 +112,7 @@ class Ship extends Entity {
                 : elapsed * -0.05),
             1,
         );
+        this.power = 1;
 
         const track = firstItem(this.scene.category('track'));
         if (!track) return;
@@ -309,6 +307,7 @@ class Ship extends Entity {
     }
 
     setLevel(level) {
+        if (level === this.level) return;
         this.level = level;
 
         const COLORS = [
