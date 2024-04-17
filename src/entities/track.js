@@ -51,32 +51,33 @@ class TrackBit {
     }
 
     get polygon() {
-        const polygon = [];
+        if (!this.cachedPolygon) {
+            this.cachedPolygon = [];
 
-        if (this.previous) {
-            const previousLeft = this.previous.pointAt(-1);
-            polygon.push([previousLeft.x, previousLeft.y]);
+            if (this.previous) {
+                const previousLeft = this.previous.pointAt(-1);
+                this.cachedPolygon.push([previousLeft.x, previousLeft.y]);
+            }
+
+            const thisLeft = this.pointAt(-1);
+            this.cachedPolygon.push([thisLeft.x, thisLeft.y]);
+
+            if (this.next) {
+                const nextLeft = this.next?.pointAt(-1);
+                const nextRight = this.next?.pointAt(1);
+                this.cachedPolygon.push([nextLeft.x, nextLeft.y]);
+                this.cachedPolygon.push([nextRight.x, nextRight.y]);
+            }
+
+            const thisRight = this.pointAt(1);
+            this.cachedPolygon.push([thisRight.x, thisRight.y]);
+
+            if (this.previous) {
+                const previousRight = this.previous?.pointAt(1);
+                this.cachedPolygon.push([previousRight.x, previousRight.y]);
+            }
         }
-
-        const thisLeft = this.pointAt(-1);
-        polygon.push([thisLeft.x, thisLeft.y]);
-
-        if (this.next) {
-            const nextLeft = this.next?.pointAt(-1);
-            const nextRight = this.next?.pointAt(1);
-            polygon.push([nextLeft.x, nextLeft.y]);
-            polygon.push([nextRight.x, nextRight.y]);
-        }
-
-        const thisRight = this.pointAt(1);
-        polygon.push([thisRight.x, thisRight.y]);
-
-        if (this.previous) {
-            const previousRight = this.previous?.pointAt(1);
-            polygon.push([previousRight.x, previousRight.y]);
-        }
-
-        return polygon;
+        return this.cachedPolygon;
     }
 }
 
