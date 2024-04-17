@@ -56,7 +56,13 @@ class Ship extends Entity {
 
         // Lose inertia over time
         const inertiaAngle = normalize(Math.atan2(this.inertia.y, this.inertia.x));
-        const resistance = Math.abs(normalize(this.rotation - inertiaAngle)) / (Math.PI / 2);
+        let resistance = Math.abs(normalize(this.rotation - inertiaAngle)) / (Math.PI / 2);
+
+        if (this.closestBit) {
+            const addedResistance = dist(this, this.closestBit) / (this.closestBit.width / 2);
+            resistance += addedResistance * 0.8;
+        }
+
         const actualResistance = interpolate(100, 800, resistance)
 
         const inertiaDistance = distP(0, 0, this.inertia.x, this.inertia.y);
