@@ -91,6 +91,7 @@ class Track extends Entity {
         for (let distance = -500 ; distance < 2000 ; distance += 200) {
             this.addTrackBit(new TrackBit(distance, 0));
         }
+        this.lastBoost = 0;
     }
 
     extend(generateBits) {
@@ -114,16 +115,6 @@ class Track extends Entity {
         }
 
         generateBits(doAdd, lastBit);
-
-        const booster = pick([
-            new Booster(),
-            // new Drain(),
-        ]);
-        const position = lastBit.pointAt(pick([0, 0.6, -0.6]));
-        booster.x = position.x;
-        booster.y = position.y;
-        booster.rotation = lastBit.angle;
-        this.scene.add(booster);
     }
 
     addStraightLine() {
@@ -187,6 +178,24 @@ class Track extends Entity {
             trackBit.index = currentLast.index + 1;
         }
         this.trackBits.push(trackBit);
+
+        if (this.scene) {
+            const player = firstItem(this.scene.category('player'));
+            if (player && trackBit.distance - this.lastBoost > player.maxSpeed * 2) {
+                this.lastBoost = trackBit.distance;
+
+                const booster = pick([
+                    new Booster(),
+                    // new Drain(),
+                ]);
+                const position = trackBit.pointAt(pick([0, 0.6, -0.6]));
+                booster.x = position.x;
+                booster.y = position.y;
+                booster.rotation = trackBit.angle;
+                this.scene.add(booster);
+            }
+        }
+
         return trackBit;
     }
 
