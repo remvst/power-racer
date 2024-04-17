@@ -280,6 +280,17 @@ class Ship extends Entity {
             ctx.lineTo(this.closestBit.x, this.closestBit.y);
             ctx.stroke();
         });
+
+        ctx.wrap(() => {
+            ctx.translate(this.x, this.y);
+            const progress = min(1, (this.age - this.lastBoost) / 0.5);
+
+            ctx.fillStyle = '#fff';
+            ctx.globalAlpha = interpolate(0.5, 0, progress);
+            ctx.beginPath();
+            ctx.arc(0, 0, progress * 500, 0, Math.PI * 2);
+            ctx.fill();
+        });
     }
 
     boost() {

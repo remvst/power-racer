@@ -10,29 +10,30 @@ class TrackPerspective extends Entity {
         ctx.lineWidth = 3;
 
         ctx.fillStyle = multiplyColor(backgroundColor, 0.6);
+
+        const left = {};
+        const nextLeft = {};
+
         for (const xOffset of [-1.05, 1.05]) {
             for (const bit of track.trackBits) {
                 if (!bit.next) continue;
 
                 ctx.beginPath();
 
-                const left = bit.pointAt(xOffset);
-                const nextLeft = bit.next.pointAt(xOffset);
+                bit.pointAt(xOffset, left);
+                bit.next.pointAt(xOffset, nextLeft);
 
                 ctx.lineTo(left.x, left.y);
                 ctx.lineTo(nextLeft.x, nextLeft.y);
 
-                const leftExtended = bit.pointAt(xOffset);
-                const nextLeftExtended = bit.next.pointAt(xOffset);
+                left.x += (left.x - camera.x) / 4;
+                left.y += (left.y - camera.y) / 4;
 
-                leftExtended.x += (leftExtended.x - camera.x) / 4;
-                leftExtended.y += (leftExtended.y - camera.y) / 4;
+                nextLeft.x += (nextLeft.x - camera.x) / 4;
+                nextLeft.y += (nextLeft.y - camera.y) / 4;
 
-                nextLeftExtended.x += (nextLeftExtended.x - camera.x) / 4;
-                nextLeftExtended.y += (nextLeftExtended.y - camera.y) / 4;
-
-                ctx.lineTo(nextLeftExtended.x, nextLeftExtended.y);
-                ctx.lineTo(leftExtended.x, leftExtended.y);
+                ctx.lineTo(nextLeft.x, nextLeft.y);
+                ctx.lineTo(left.x, left.y);
 
                 ctx.fill();
                 ctx.stroke();
@@ -47,8 +48,8 @@ class TrackPerspective extends Entity {
 
                 ctx.beginPath();
 
-                const left = bit.pointAt(xOffset);
-                const nextLeft = bit.next.pointAt(xOffset);
+                bit.pointAt(xOffset, left);
+                bit.next.pointAt(xOffset, nextLeft);
 
                 nextLeft.x += (nextLeft.x - camera.x) / 4;
                 nextLeft.y += (nextLeft.y - camera.y) / 4;
@@ -59,11 +60,11 @@ class TrackPerspective extends Entity {
                 ctx.lineTo(left.x, left.y);
                 ctx.lineTo(nextLeft.x, nextLeft.y);
 
-                const leftExtended = bit.pointAt(xOffset * 1.2);
-                const nextLeftExtended = bit.next.pointAt(xOffset * 1.2);
+                bit.pointAt(xOffset * 1.2, left);
+                bit.next.pointAt(xOffset * 1.2, nextLeft);
 
-                ctx.lineTo(nextLeftExtended.x, nextLeftExtended.y);
-                ctx.lineTo(leftExtended.x, leftExtended.y);
+                ctx.lineTo(nextLeft.x, nextLeft.y);
+                ctx.lineTo(left.x, left.y);
 
                 ctx.fill();
             }

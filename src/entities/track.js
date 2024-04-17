@@ -37,11 +37,11 @@ class TrackBit {
         return 0;
     }
 
-    pointAt(xOffset) {
-        return {
-            x: this.x + Math.cos(this.angle + Math.PI / 2) * xOffset * this.width / 2,
-            y: this.y + Math.sin(this.angle + Math.PI / 2) * xOffset * this.width / 2,
-        };
+    pointAt(xOffset, out) {
+        out = out || {};
+        out.x = this.x + Math.cos(this.angle + Math.PI / 2) * xOffset * this.width / 2;
+        out.y = this.y + Math.sin(this.angle + Math.PI / 2) * xOffset * this.width / 2;
+        return out;
     }
 
     contains(x, y) {
@@ -253,13 +253,15 @@ class Track extends Entity {
         ctx.fillStyle = '#000';
         ctx.globalAlpha = 0.8;
         ctx.beginPath();
+
+        const reusablePt = {};
         for (let i = 0 ; i < this.trackBits.length ; i++) {
-            const bit = this.trackBits[i];
-            ctx.lineTo(bit.pointAt(-1).x, bit.pointAt(-1).y);
+            const { x, y } = this.trackBits[i].pointAt(-1, reusablePt);
+            ctx.lineTo(x, y);
         }
         for (let i = this.trackBits.length - 1 ; i >= 0 ; i--) {
-            const bit = this.trackBits[i];
-            ctx.lineTo(bit.pointAt(1).x, bit.pointAt(1).y);
+            const { x, y } = this.trackBits[i].pointAt(1, reusablePt);
+            ctx.lineTo(x, y);
         }
         ctx.fill();
         ctx.globalAlpha = 1;
@@ -268,23 +270,37 @@ class Track extends Entity {
 
         const trackColor1 = multiplyColor(backgroundColor, 0.1);
         const trackColor2 = multiplyColor(backgroundColor, 0.2);
+
+        const left = {};
+        const right = {};
+        const nextLeft = {};
+        const nextRight = {};
+
         for (const bit of this.trackBits) {
             if (!bit.next) continue;
             ctx.fillStyle = ((bit.distance % 400) / 400) < 0.5 ? trackColor1 : trackColor2;
             ctx.beginPath();
-            ctx.lineTo(bit.pointAt(-1).x, bit.pointAt(-1).y);
-            ctx.lineTo(bit.pointAt(1).x, bit.pointAt(1).y);
-            ctx.lineTo(bit.next.pointAt(1).x, bit.next.pointAt(1).y);
-            ctx.lineTo(bit.next.pointAt(-1).x, bit.next.pointAt(-1).y);
+
+            bit.pointAt(-1, left);
+            bit.pointAt(1, right);
+            bit.next.pointAt(-1, nextLeft);
+            bit.next.pointAt(1, nextRight);
+
+            ctx.lineTo(left.x, left.y);
+            ctx.lineTo(right.x, right.y);
+            ctx.lineTo(nextRight.x, nextRight.y);
+            ctx.lineTo(nextLeft.x, nextLeft.y);
             ctx.fill();
         }
 
         ctx.strokeStyle = multiplyColor(backgroundColor, 0.8);
         ctx.lineWidth = 30;
+
         for (const xOffset of [-1, 1]) {
             ctx.beginPath();
             for (const bit of this.trackBits) {
-                ctx.lineTo(bit.pointAt(xOffset).x, bit.pointAt(xOffset).y);
+                const { x, y } = bit.pointAt(xOffset, reusablePt);
+                ctx.lineTo(x, y);
             }
             ctx.stroke();
         }
@@ -294,30 +310,8 @@ class Track extends Entity {
         for (const xOffset of [-0.33, 0.33]) {
             ctx.beginPath();
             for (const bit of this.trackBits) {
-                ctx.lineTo(bit.pointAt(xOffset).x, bit.pointAt(xOffset).y);
-            }
-            ctx.stroke();
-        }
-
-        return;
-
-        let i = 0;
-        for (const bit of this.trackBits) {
-            ctx.fillStyle = '#f00';
-            ctx.lineWidth = 1;
-            ctx.fillRect(bit.pointAt(1).x - 5, bit.pointAt(1).y - 5, 10, 10);
-
-            // ctx.fillText(`${i++}`, bit.x, bit.y);
-            ctx.fillText(`${Math.round(bit.distance)}`, bit.x, bit.y);
-
-            ctx.beginPath();
-            ctx.moveTo(bit.x, bit.y);
-            ctx.lineTo(bit.x + Math.cos(bit.angle) * 20, bit.y + Math.sin(bit.angle) * 20);
-            ctx.stroke();
-
-            ctx.beginPath();
-            for (const xOffset of [-1, 1]) {
-                ctx.lineTo(bit.pointAt(xOffset).x, bit.pointAt(xOffset).y);
+                const { x, y } = bit.pointAt(xOffset, reusablePt);
+                ctx.lineTo(x, y);
             }
             ctx.stroke();
         }

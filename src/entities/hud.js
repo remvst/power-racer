@@ -22,13 +22,15 @@ class HUD extends Entity {
 
             ctx.fillStyle = '#fff';
             ctx.beginPath();
+
+            const reusablePt = {};
             for (let i = 0 ; i < track.trackBits.length ; i++) {
-                const bit = track.trackBits[i];
-                ctx.lineTo(bit.pointAt(-1).x, bit.pointAt(-1).y);
+                const { x, y } = track.trackBits[i].pointAt(-1, this.reusablePt);
+                ctx.lineTo(x, y);
             }
             for (let i = track.trackBits.length - 1 ; i >= 0 ; i--) {
-                const bit = track.trackBits[i];
-                ctx.lineTo(bit.pointAt(1).x, bit.pointAt(1).y);
+                const { x, y } = track.trackBits[i].pointAt(1, this.reusablePt);
+                ctx.lineTo(x, y);
             }
             ctx.fill();
         });
