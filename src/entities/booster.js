@@ -9,6 +9,11 @@ class Booster extends Entity {
             this.scene.remove(this);
             player.boost();
         }
+
+        const track = firstItem(this.scene.category('track'));
+        if (this.distance < track.trackBits[0].distance) {
+            this.remove();
+        }
     }
 
     doRender() {
