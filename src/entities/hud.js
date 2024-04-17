@@ -110,5 +110,20 @@ class HUD extends Entity {
             ctx.arc(0, 0, 100, Math.PI / 2, Math.PI / 2 + Math.PI * 2 * speedRatio);
             ctx.stroke();
         });
+
+        for (const [x, y, down] of [
+            [0, 0, player.controls.brake],
+            [-1, 0, player.controls.left],
+            [1, 0, player.controls.right],
+            [0, -1, player.controls.accelerate],
+        ]) {
+            ctx.wrap(() => {
+                ctx.translate(150, CANVAS_HEIGHT - 100);
+
+                ctx.fillStyle = down ? '#f00' : '#fff';
+                ctx.translate(x * 70, y * 70);
+                ctx.fillRect(-20, -20, 60, 60);
+            })
+        }
     }
 }
