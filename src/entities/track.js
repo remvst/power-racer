@@ -193,6 +193,7 @@ class Track extends Entity {
                 booster.x = position.x;
                 booster.y = position.y;
                 booster.rotation = trackBit.angle;
+                booster.distance = trackBit.distance;
                 this.scene.add(booster);
             }
         }

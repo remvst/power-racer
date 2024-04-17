@@ -20,25 +20,19 @@ for file in \
     util/resizer.js \
     util/first-item.js \
     util/colors.js \
-    util/format-time.js \
     input/keyboard.js \
-    graphics/create-canvas.js \
     graphics/wrap.js \
     entities/entity.js \
     entities/background.js \
     entities/track.js \
     entities/track-perspective.js \
-    entities/track-tester.js \
     entities/camera.js \
     entities/interpolator.js \
     entities/ship.js \
     entities/player.js \
     entities/hud.js \
     entities/booster.js \
-    entities/drain.js \
     entities/animations/particle.js \
-    entities/animations/color-change.js \
-    sound/speech.js \
     scene.js \
     level.js \
     main.js \
