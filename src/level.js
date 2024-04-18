@@ -9,6 +9,7 @@ class Level {
         this.scene.add(new Camera());
         this.scene.add(new TrackPerspective());
         this.scene.add(new HUD());
+        this.scene.add(new Menu());
 
         DOWN = {};
     }

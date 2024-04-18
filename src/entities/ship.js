@@ -48,6 +48,8 @@ class Ship extends Entity {
     cycle(elapsed) {
         super.cycle(elapsed);
 
+        if (firstItem(this.scene.category('menu'))) return;
+
         if (this.controls.left) this.rotation -= Math.PI * elapsed;
         if (this.controls.right) this.rotation += Math.PI * elapsed;
 
@@ -184,7 +186,7 @@ class Ship extends Entity {
             this.explode();
         }
 
-        this.score = this.closestBit.index * 10;
+        this.score = this.closestBit.index * 10 * (this.level + 1);
     }
 
     addTrailParticle(relativeX, relativeY) {
@@ -356,5 +358,7 @@ class Ship extends Entity {
 
         firstItem(this.scene.category('camera')).shake(0.3);
         this.remove();
+
+        setTimeout(() => level.scene.add(new Menu(this.score)), 1000);
     }
 }

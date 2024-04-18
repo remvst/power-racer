@@ -46,6 +46,16 @@ frame = () => {
     requestAnimationFrame(frame);
 }
 
-for (const evt of ['click']) {
-    window.addEventListener(evt, () => playSong());
-}
+onclick = () => {
+    playSong();
+
+    const menu = firstItem(level.scene.category('menu'));
+    if (menu) {
+        if (!firstItem(level.scene.category('player'))) {
+            level = new Level();
+            firstItem(level.scene.category('menu')).remove();
+        } else {
+            menu.remove();
+        }
+    }
+};

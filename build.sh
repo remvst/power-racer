@@ -33,6 +33,7 @@ for file in \
     entities/hud.js \
     entities/booster.js \
     entities/animations/particle.js \
+    entities/menu.js \
     sound/sonantx.js \
     sound/song.js \
     scene.js \

@@ -1,5 +1,7 @@
 class HUD extends Entity {
     doRender(camera) {
+        if (firstItem(this.scene.category('menu'))) return;
+
         this.cancelCameraOffset(camera);
 
         const player = firstItem(this.scene.category('player'));

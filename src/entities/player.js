@@ -7,6 +7,8 @@ class Player extends Ship {
     cycle(elapsed) {
         super.cycle(elapsed);
 
+        if (firstItem(this.scene.category('menu'))) return;
+
         this.controls.left = DOWN[37];
         this.controls.right = DOWN[39];
         this.controls.brake = DOWN[40];
