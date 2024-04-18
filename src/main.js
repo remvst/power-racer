@@ -45,3 +45,7 @@ frame = () => {
 
     requestAnimationFrame(frame);
 }
+
+for (const evt of ['click']) {
+    window.addEventListener(evt, () => playSong());
+}
