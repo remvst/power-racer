@@ -53,7 +53,7 @@ class Ship extends Entity {
         const accel = !!(this.controls.accelerate && this.power);
         if (accel !== !!this.accelerateSoundStarted) {
             if (accel) {
-                this.accelerateSound = zzfx(...[.1,,118,,2,0,4,1.05,.1,.6,,,.19,.7,,.2,,.5]);
+                this.accelerateSound = zzfx(...[.03,,118,,2,0,4,1.05,.1,.6,,,.19,.7,,.2,,.5]);
                 this.accelerateSound.loop = true;
                 this.accelerateSound.start();
             } else {
