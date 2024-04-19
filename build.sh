@@ -45,9 +45,14 @@ for file in \
     cat src/$file >> $OUT_JS
 done
 
+# Terser
 tmp=`mktemp`
-npx terser $OUT_JS --compress ecma=2015,computed_props=false 1>$tmp
+npx -y terser $OUT_JS --compress ecma=2015,computed_props=false 1>$tmp
 cat $tmp 1>$OUT_JS
+rm $tmp
+
+# Roadroller
+npx -y roadroller $OUT_JS  -o $OUT_JS
 
 # Copy files as is
 for file in \
