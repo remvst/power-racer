@@ -45,9 +45,9 @@ for file in \
     cat src/$file >> $OUT_JS
 done
 
-# tmp=`mktemp`
-# npx terser $OUT_JS --compress ecma=2015,computed_props=false 1>$tmp
-# cat $tmp 1>$OUT_JS
+tmp=`mktemp`
+npx terser $OUT_JS --compress ecma=2015,computed_props=false 1>$tmp
+cat $tmp 1>$OUT_JS
 
 # Copy files as is
 for file in \
