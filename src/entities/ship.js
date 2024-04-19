@@ -146,6 +146,8 @@ class Ship extends Entity {
             this.power -= 0.1;
             this.lastBoost = 0;
 
+            hitSound();
+
             firstItem(this.scene.category('camera')).shake(0.3);
 
             for (let i = 0 ; i < 50 ; i++) {
@@ -316,6 +318,8 @@ class Ship extends Entity {
 
         this.boostCount++;
         this.setLevel(Math.floor(this.boostCount / 5));
+
+        boostSound();
     }
 
     setLevel(level) {
@@ -360,5 +364,7 @@ class Ship extends Entity {
         this.remove();
 
         setTimeout(() => level.scene.add(new Menu(this.score)), 1000);
+
+        explosionSound();
     }
 }
