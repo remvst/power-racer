@@ -16,7 +16,7 @@ class Ship extends Entity {
             y: 0,
         };
 
-        this.lastBoost = this.lastLevelUp = -99;
+        this.lastBoost = this.lastLevelUp = this.lastCrash = -99;
 
         this.nextParticle = 0;
         this.trailLeft = [];
@@ -145,6 +145,7 @@ class Ship extends Entity {
 
             this.power -= 0.1;
             this.lastBoost = 0;
+            this.lastCrash = this.age;
 
             hitSound();
 
@@ -254,7 +255,7 @@ class Ship extends Entity {
             ctx.translate(this.x, this.y);
             ctx.rotate(this.rotation);
 
-            ctx.fillStyle = '#fff';;
+            ctx.fillStyle = this.age - this.lastCrash < 0.3 ? '#f00' : '#fff';
             ctx.beginPath();
             ctx.moveTo(40, 0);
             ctx.lineTo(-20, -20);
