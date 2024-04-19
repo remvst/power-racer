@@ -6,7 +6,7 @@ let level;
 
 let GAME_PAUSED;
 
-let DEBUG = true;
+let DEBUG = false;
 
 let CANVAS_WIDTH = 1600;
 let CANVAS_HEIGHT = 900;

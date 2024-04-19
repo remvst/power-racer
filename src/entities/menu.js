@@ -17,6 +17,8 @@ class Menu extends Entity {
         ctx.shadowColor = '#000';
         ctx.shadowOffsetY = 10;
 
+        ctx.fillStyle = '#fff';
+
         ctx.wrap(() => {
             ctx.font = '144pt Impact';
             ctx.textAlign = 'center';
