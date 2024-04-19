@@ -36,6 +36,8 @@ for file in \
     entities/menu.js \
     sound/sonantx.js \
     sound/song.js \
+    sound/ZzFXMicro.js \
+    sound/sfx.js \
     scene.js \
     level.js \
     main.js \
