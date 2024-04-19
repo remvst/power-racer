@@ -50,6 +50,19 @@ class Ship extends Entity {
 
         if (firstItem(this.scene.category('menu'))) return;
 
+        const accel = !!(this.controls.accelerate && this.power);
+        if (accel !== !!this.accelerateSoundStarted) {
+            if (accel) {
+                this.accelerateSound = zzfx(...[.1,,118,,2,0,4,1.05,.1,.6,,,.19,.7,,.2,,.5]);
+                this.accelerateSound.loop = true;
+                this.accelerateSound.start();
+            } else {
+                this.accelerateSound.stop();
+                this.accelerateSound = null;
+            }
+            this.accelerateSoundStarted = accel;
+        }
+
         if (this.controls.left) this.rotation -= Math.PI * elapsed;
         if (this.controls.right) this.rotation += Math.PI * elapsed;
 
@@ -173,7 +186,7 @@ class Ship extends Entity {
         while (this.nextParticle <= 0) {
             this.nextParticle += 1 / 240;
 
-            if (this.isBoosted) {
+            if (this.isBoosted || this.controls.accelerate) {
                 this.addTrailParticle(-10, 0);
             }
         }
@@ -374,5 +387,6 @@ class Ship extends Entity {
         setTimeout(() => level.scene.add(new Menu(this.score)), 1000);
 
         explosionSound();
+        this.accelerateSound?.stop();
     }
 }
