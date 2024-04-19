@@ -16,7 +16,7 @@ class Ship extends Entity {
             y: 0,
         };
 
-        this.lastBoost = -99;
+        this.lastBoost = this.lastLevelUp = -99;
 
         this.nextParticle = 0;
         this.trailLeft = [];
@@ -317,9 +317,16 @@ class Ship extends Entity {
         }
 
         this.boostCount++;
+
+        const oldLevel = this.level;
         this.setLevel(Math.floor(this.boostCount / 5));
 
-        boostSound();
+        if (oldLevel < this.level) {
+            this.lastLevelUp = this.age;
+            levelUpSound();
+        } else {
+            boostSound();
+        }
     }
 
     setLevel(level) {

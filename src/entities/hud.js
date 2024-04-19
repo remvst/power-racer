@@ -65,14 +65,15 @@ class HUD extends Entity {
             }
         })
 
+        ctx.font = 'bold 48pt Impact';
+        ctx.textBaseline = 'center';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#fff';
 
         if (player.closestBit && Math.abs(normalize(player.rotation - player.closestBit.angle)) > Math.PI * 4 / 5) {
-            ctx.font = 'bold 48pt Impact';
-            ctx.textBaseline = 'center';
-            ctx.textAlign = 'center';
-
-            ctx.fillStyle = '#fff';
-            ctx.fillText('WRONG WAY', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 4);
+            ctx.fillText('WRONG WAY', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 3);
+        } else if (player.age - player.lastLevelUp < 2) {
+            ctx.fillText(`ZONE ${player.level + 1}`, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 3);
         }
 
         ctx.wrap(() => {
