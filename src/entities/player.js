@@ -9,9 +9,9 @@ class Player extends Ship {
 
         if (firstItem(this.scene.category('menu'))) return;
 
-        this.controls.left = DOWN[37];
-        this.controls.right = DOWN[39];
-        this.controls.brake = DOWN[40];
-        this.controls.accelerate = DOWN[38];
+        this.controls.left = DOWN[37] || DOWN[65];
+        this.controls.right = DOWN[39] || DOWN[68];
+        this.controls.brake = DOWN[40] || DOWN[83];
+        this.controls.accelerate = DOWN[38] || DOWN[87];
     }
 }
