@@ -25,11 +25,20 @@ class Menu extends Entity {
             ctx.textBaseline = 'middle';
 
             ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 4);
+            let k = 0;
             for (const line of ['POWER', 'RACER']) {
                 let i = 0;
                 for (const char of line.split('')) {
-                    ctx.fillText(char, ((i / (line.length - 1) - 0.5) * 700), 0);
-                    i++;
+                    ctx.wrap(() => {
+                        ctx.translate((i / (line.length - 1) - 0.5) * 700, 0);
+
+                        const scale = interpolate(0, 1, this.age - k * 0.05, easeOutBack);
+                        ctx.scale(scale, scale);
+
+                        ctx.fillText(char, 0, 0);
+                        i++;
+                        k++;
+                    })
                 }
                 ctx.translate(0, 170);
             }

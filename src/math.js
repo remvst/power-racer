@@ -7,11 +7,19 @@ normalize = x => moduloWithNegative(x, PI);
 angleBetween = (a, b) => atan2(b.y - a.y, b.x - a.x);
 roundToNearest = (x, precision) => round(x / precision) * precision;
 pick = a => a[~~(random() * a.length)];
-interpolate = (from, to, ratio) => between(0, ratio, 1) * (to - from) + from;
 
 // Easing
 linear = x => x;
 easeOutQuint = x => 1 - pow(1 - x, 5);
+easeOutBack = (x) => {
+    const c1 = 1.70158;
+    const c3 = c1 + 1;
+
+    return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+}
+interpolate = (from, to, ratio, easing = linear) => {
+    return easing(between(0, ratio, 1)) * (to - from) + from;
+}
 
 // Modulo centered around zero: the result will be between -y and +y
 moduloWithNegative = (x, y) => {
