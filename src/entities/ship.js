@@ -75,7 +75,7 @@ class Ship extends Entity {
             resistance += addedResistance * 0.8;
         }
 
-        const actualResistance = interpolate(100, 800, resistance)
+        const actualResistance = interpolate(100, 1200, resistance)
 
         const inertiaDistance = distP(0, 0, this.inertia.x, this.inertia.y);
         const newDistance = Math.max(0, inertiaDistance - elapsed * actualResistance);
